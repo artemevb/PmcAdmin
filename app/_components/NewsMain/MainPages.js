@@ -1,4 +1,3 @@
-// MainPages.jsx
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -79,139 +78,67 @@ export default function MainPages() {
         setIsModalOpen(true);
     };
 
-    const handleAddBlock = () => {
-        // Определяем следующий уникальный orderNum
-        const existingOrderNums = news.optionList.map(block => block.orderNum);
-        const newOrderNum = existingOrderNums.length > 0 ? Math.max(...existingOrderNums) + 1 : 0;
-
-        // Создаем новый блок с пустыми значениями
-        const newBlock = {
-            title: {
-                uz: "",
-                ru: ""
-            },
-            body: {
-                uz: "",
-                ru: ""
-            },
-            photo: null,
-            orderNum: newOrderNum
-        };
-
-        setCurrentBlock(newBlock);
-        setIsModalOpen(true);
-    };
-
     const handleModalClose = () => {
         setIsModalOpen(false);
         setCurrentBlock(null);
     };
 
-    const handleSaveBlock = async (updatedBlock) => {
-        let updatedOptionList;
+    const handleSaveBlock = (updatedNews) => {
+        // Обновите локальное состояние news с обновленными данными
+        setNews(updatedNews);
 
-        if (updatedBlock.id) {
-            // Существующий блок: обновляем его в optionList
-            updatedOptionList = news.optionList.map(block =>
-                block.id === updatedBlock.id ? updatedBlock : block
-            );
-        } else {
-            // Новый блок: добавляем его в optionList
-            updatedOptionList = [
-                ...news.optionList,
-                {
-                    ...updatedBlock,
-                    // При необходимости, можете назначить уникальный orderNum здесь
-                    orderNum: updatedBlock.orderNum
-                }
-            ];
-        }
+        // Установите статус обновления для отображения уведомления
+        setUpdateStatus({ success: true, message: locale === 'ru' ? 'Блок успешно обновлен.' : 'Blok muvaffaqiyatli yangilandi.' });
 
-        const updatedNews = {
-            ...news,
-            optionList: updatedOptionList
-        };
+        // Закройте модальное окно
+        setIsModalOpen(false);
+        setCurrentBlock(null);
 
-        // Логируем обновленный объект news для отладки
-        console.log("Отправляемые данные для обновления:", updatedNews);
+        // Сбросить статус уведомления через некоторое время
+        setTimeout(() => {
+            setUpdateStatus({ success: null, message: '' });
+        }, 3000);
+    };
+
+    const handleDeleteClick = async (blockId) => {
+        const confirmDelete = window.confirm(locale === 'ru' 
+            ? 'Вы уверены, что хотите удалить этот блок?' 
+            : 'Ushbu blokni o\'chirishga ishonchingiz komilmi?');
+
+        if (!confirmDelete) return;
 
         try {
-            // Если есть фото в новом блоке, нужно сначала загрузить его
-            if (!updatedBlock.id && updatedBlock.photo instanceof File) {
-                // Загрузка фото
-                const formData = new FormData();
-                formData.append('photo', updatedBlock.photo);
+            // Optionally, show a loading state or disable the button here
 
-                const uploadResponse = await axios.post('https://pmc.result-me.uz/v1/photo/upload', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        'Accept-Language': locale
-                    },
-                });
-
-                if (uploadResponse.status === 200) {
-                    // Получаем URL загруженного фото
-                    const photoUrl = uploadResponse.data.url;
-                    // Обновляем блок с URL фото
-                    const newBlockIndex = updatedOptionList.length - 1;
-                    updatedOptionList[newBlockIndex].photo = { url: photoUrl };
-                } else {
-                    throw new Error(locale === 'ru' ? 'Ошибка при загрузке фото.' : 'Foto yuklashda xato yuz berdi.');
-                }
-            }
-
-            // Отправляем обновленные данные на сервер
-            const response = await axios.put(
-                `https://pmc.result-me.uz/v1/newness/update/${slug}`,
-                updatedNews,
-                {
-                    headers: { 'Accept-Language': locale }
-                }
-            );
-
-            console.log("Ответ сервера:", response.data);
-
-            // Обновляем локальное состояние с данными из ответа
-            setNews(response.data.data);
-
-            // Отображаем сообщение об успехе
-            setUpdateStatus({
-                success: true,
-                message: locale === 'ru' ? 'Блок успешно обновлен.' : 'Blok muvaffaqiyatli yangilandi.'
+            await axios.delete(`https://pmc.result-me.uz/v1/newness/block/delete/${blockId}`, {
+                headers: { 'Accept-Language': locale },
             });
-        } catch (err) {
-            // Логируем подробности ошибки
-            if (err.response) {
-                // Сервер ответил с кодом состояния, отличным от 2xx
-                console.error('Ошибка сохранения блока:', err.response.data);
-                setUpdateStatus({
-                    success: false,
-                    message: locale === 'ru' ? `Не удалось сохранить блок: ${err.response.data.message || 'Неизвестная ошибка.'}` : `Blokni saqlashda xato yuz berdi: ${err.response.data.message || 'Noma\'lum xato.'}`
-                });
-            } else if (err.request) {
-                // Запрос был сделан, но ответ не получен
-                console.error('Нет ответа от сервера:', err.request);
-                setUpdateStatus({
-                    success: false,
-                    message: locale === 'ru' ? 'Нет ответа от сервера.' : 'Serverdan javob yo\'q.'
-                });
-            } else {
-                // Произошло что-то еще
-                console.error('Ошибка при настройке запроса:', err.message);
-                setUpdateStatus({
-                    success: false,
-                    message: locale === 'ru' ? `Ошибка: ${err.message}` : `Xato: ${err.message}`
-                });
-            }
-        } finally {
-            // Закрываем модальное окно и сбрасываем текущий блок
-            setIsModalOpen(false);
-            setCurrentBlock(null);
 
-            // Очищаем статус уведомления через некоторое время
+            // Update the local state by filtering out the deleted block
+            setNews((prevNews) => ({
+                ...prevNews,
+                optionList: prevNews.optionList.filter(block => block.id !== blockId),
+            }));
+
+            // Set success status
+            setUpdateStatus({ success: true, message: locale === 'ru' 
+                ? 'Блок успешно удален.' 
+                : 'Blok muvaffaqiyatli o\'chirildi.' });
+
+            // Reset the status after a delay
             setTimeout(() => {
                 setUpdateStatus({ success: null, message: '' });
-            }, 5000);
+            }, 3000);
+        } catch (err) {
+            console.error('Error deleting block:', err);
+            setUpdateStatus({ success: false, message: locale === 'ru' 
+                ? 'Не удалось удалить блок.' 
+                : 'Blok o\'chirilishda xato yuz berdi.' });
+            
+            // Reset the status after a delay
+            setTimeout(() => {
+                setUpdateStatus({ success: null, message: '' });
+            }, 3000);
         }
     };
 
@@ -242,7 +169,7 @@ export default function MainPages() {
                             </p>
                         )}
 
-                        {/* Главный заголовок и переключатель локали */}
+                        {/* Главный заголовок */}
                         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                             {news.optionList?.[0]?.title && (
                                 <h1 className="text-[25px] font-bold text-black mb-2 mdx:text-[35px] xl:text-[40px] 2xl:text-[50px] leading-[1.10] mt-2">
@@ -254,7 +181,7 @@ export default function MainPages() {
                                 </h1>
                             )}
 
-                            {/* Переключатель локали */}
+                            {/* Переключатель языка */}
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => switchLocale('ru')}
@@ -290,7 +217,7 @@ export default function MainPages() {
 
                     {/* Список блоков */}
                     {news.optionList?.map((item, index) => (
-                        <div className="mt-[35px] xl:mt-[70px]" key={item.id || `new-block-${index}`}>
+                        <div className="mt-[35px] xl:mt-[70px]" key={item.id}>
                             <div className="flex flex-col justify-between items-start">
                                 {index !== 0 && item.title && (
                                     <h3 className={`text-[20px] mdx:text-[26px] font-bold text-[#252324]`}>
@@ -323,28 +250,31 @@ export default function MainPages() {
                                     />
                                 </div>
                             )}
-                            {/* Кнопка редактирования блока */}
-                            <button
-                                onClick={() => handleEditClick(item)}
-                                className="w-[223px] py-3 bg-[#00863E] hover:bg-[#2f9c62] text-white rounded"
-                            >
-                                Редактировать блок
-                            </button>
+                            {/* Кнопки редактирования и удаления блока */}
+                            <div className="flex gap-4 mt-4">
+                                <button
+                                    onClick={() => handleEditClick(item)}
+                                    className="w-[223px] py-3 bg-[#00863E] hover:bg-[#2f9c62] text-white rounded"
+                                >
+                                    Редактировать блок
+                                </button>
+                                <button
+                                    onClick={() => handleDeleteClick(item.id)}
+                                    className="w-[223px] py-3 bg-red-500 hover:bg-red-700 text-white rounded"
+                                >
+                                    Удалить блок
+                                </button>
+                            </div>
                         </div>
                     ))}
-
-                    {/* Кнопка добавления блока */}
-                    <button
-                        onClick={handleAddBlock} // Привязываем обработчик
-                        className='mt-[80px] w-full flex flex-col items-center justify-center h-[198px] border-[3px] border-dashed text-[#00863E] text-[22px] hover:text-[#2c9e61] font-bold custom-border'
-                    >
+                    <button className='mt-[80px] w-full flex flex-col items-center justify-center h-[198px] border-[3px]  border-dashed text-[#00863E] text-[22px] hover:text-[#2c9e61] font-bold custom-border'>
                         <Image
                             src={plus_green}
-                            width={30}
-                            height={30}
+                            width={30} // Adjusted to match the className width
+                            height={30} // Adjusted to match the className width
                             quality={100}
-                            alt="Add Block Icon"
-                            className="w-[30px] h-[30px]"
+                            alt="Green Arrow"
+                            className="w-[30px] h-[30px]" // Ensure height matches for consistent sizing
                         />
                         Добавить блок
                     </button>
@@ -358,6 +288,8 @@ export default function MainPages() {
                 blockData={currentBlock}
                 onSave={handleSaveBlock}
                 locale={locale} // Передача текущей локали
+                newsId={news.id} // Передача ID новости
+                newsActive={news.active} // Передача состояния активности новости
             />
         </>
     )
