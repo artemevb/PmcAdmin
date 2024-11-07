@@ -1,172 +1,127 @@
 'use client'
 
-import newsPhoto from '@/public/images/News/image.png'
-import newsPhoto2 from '@/public/images/News/image2.png'
-// import axios from 'axios'
-import { useParams } from 'next/navigation'
+import axios from 'axios'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import NewCardMain from '../News/NewCardMain'
 import plus from "@/public/svg/plus-white.svg";
 import plus_green from "@/public/svg/plus-green.svg";
 import Image from "next/image";
 
 export default function NewsComp() {
-    const params = useParams()
-    const [news, setNews] = useState([]) // State for news
-    const [loading, setLoading] = useState(false) // Loading state
-    const [error, setError] = useState(null) // Error state
+    const router = useRouter()
+    // Инициализируем локаль из состояния или локального хранилища
+    const [locale, setLocale] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('locale') || 'ru'
+        }
+        return 'ru'
+    })
 
-    // Temporary data
-    const temporaryNews = [
-        {
-            slug: 'news-1',
-            head: {
-                title: `Мужское здоровье`,
-                heading: 'Заголовок новости 1',
-                date: 'Дата новости 1',
-                photo: { url: newsPhoto },
-            },
-        },
-        {
-            slug: 'news-2',
-            head: {
-                title: `Мужское здоровье`,
-                heading: 'Заголовок новости 2',
-                date: 'Дата новости 2',
-                photo: { url: newsPhoto2 },
-            },
-        },
-        {
-            slug: 'news-3',
-            head: {
-                title: `Мужское здоровье`,
-                heading: 'Заголовок новости 3',
-                date: 'Дата новости 3',
-                photo: { url: newsPhoto },
-            },
-        },
-        {
-            slug: 'news-4',
-            head: {
-                title: `Аллергия летом`,
-                heading: 'Заголовок новости 4',
-                date: 'Дата новости 4',
-                photo: { url: newsPhoto2 },
-            },
-        },
-        {
-            slug: 'news-5',
-            head: {
-                title: `Здоровье осенью`,
-                heading: 'Заголовок новости 5',
-                date: 'Дата новости 5',
-                photo: { url: newsPhoto },
-            },
-        },
-        {
-            slug: 'news-6',
-            head: {
-                title: `Продукты для иммунитета`,
-                heading: 'Заголовок новости 6',
-                date: 'Дата новости 6',
-                photo: { url: newsPhoto2 },
-            },
-        },
-        {
-            slug: 'news-7',
-            head: {
-                title: `Как бороться с гриппом`,
-                heading: 'Заголовок новости 7',
-                date: 'Дата новости 7',
-                photo: { url: newsPhoto },
-            },
-        },
-        {
-            slug: 'news-8',
-            head: {
-                title: `Мужское здоровье`,
-                heading: 'Заголовок новости 8',
-                date: 'Дата новости 8',
-                photo: { url: newsPhoto2 },
-            },
-        },
-        {
-            slug: 'news-9',
-            head: {
-                title: `Профилактика инфекций`,
-                heading: 'Заголовок новости 9',
-                date: 'Дата новости 9',
-                photo: { url: newsPhoto },
-            },
-        },
-        {
-            slug: 'news-10',
-            head: {
-                title: `Советы по здоровью`,
-                heading: 'Заголовок новости 10',
-                date: 'Дата новости 10',
-                photo: { url: newsPhoto2 },
-            },
-        },
-    ]
+    const [news, setNews] = useState([]) // Состояние для новостей
+    const [loading, setLoading] = useState(true) // Состояние загрузки
+    const [error, setError] = useState(null) // Состояние ошибки
 
-    // Using temporary data
-    useEffect(() => {
-        setNews(temporaryNews)
-    }, [])
-
-    const loadMoreNews = () => {
-        setVisibleNewsCount(prevCount => prevCount + 8); // Show 8 more news items
+    // Функция для загрузки данных с учетом локали
+    const fetchNews = async (currentLocale) => {
+        try {
+            const response = await axios.get(`https://pmc.result-me.uz/v1/newness/get-all`, {
+                headers: {
+                    'Accept-Language': currentLocale // Устанавливаем язык запроса
+                }
+            })
+            setNews(response.data.data) // Обновляем состояние news с полученными данными
+            setLoading(false) // Сбрасываем состояние загрузки
+            console.log('Accept-Language:', currentLocale) // Выводим текущий язык в консоль
+        } catch (err) {
+            setError(currentLocale === 'ru' ? "Ошибка при загрузке новостей." : "Yangiliklarni yuklashda xato yuz berdi.") // Обработка ошибки на основе локали
+            setLoading(false)
+        }
     }
 
-    if (loading) return <div>Загрузка...</div> // Loading indicator
-    if (error) return <div>{error}</div> // Error message
+    // Запуск fetchNews при монтировании компонента и смене локали
+    useEffect(() => {
+        setLoading(true)
+        setError(null)
+        fetchNews(locale)
+    }, [locale])
+
+    // Функция для переключения локали
+    const switchLocale = (newLocale) => {
+        if (newLocale === locale) return // Не делаем ничего, если выбранная локаль уже активна
+        setLocale(newLocale) // Обновляем локаль в состоянии
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('locale', newLocale) // Сохраняем выбранную локаль в локальное хранилище
+        }
+    }
+
+    if (loading) return <div className='text-center'>{locale === 'ru' ? 'Загрузка...' : 'Yuklanmoqda...'}</div> // Индикатор загрузки на основе локали
+    if (error) return <div className='text-center text-red-500'>{error}</div> // Сообщение об ошибке
 
     return (
         <div className='w-full max-w-[1440px] mx-auto px-2 flex flex-col gap-8 mb-[90px] mdx:mb-[150px] 2xl:mb-[190px]'>
-            <div className='flex justify-between items-center'>
+            {/* Header Section with Title and Locale Switcher */}
+            <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
                 <h2 className='text-[30px] mdx:text-[40px] mdl:text-[43px] xl:text-[50px] font-semibold'>
-                    Новости
+                    {locale === 'ru' ? 'Новости' : 'Yangiliklar'}
                 </h2>
+                
+                {/* Locale Switcher Buttons */}
+                <div className='flex gap-2'>
+                    <button
+                        onClick={() => switchLocale('ru')}
+                        className={`px-4 py-2 rounded ${
+                            locale === 'ru' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'
+                        }`}
+                    >
+                        Русский
+                    </button>
+                    <button
+                        onClick={() => switchLocale('uz')}
+                        className={`px-4 py-2 rounded ${
+                            locale === 'uz' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'
+                        }`}
+                    >
+                        O'zbek
+                    </button>
+                </div>
+
+                {/* Add News Button */}
                 <button className='bg-[#00863E] text-[#ffff] h-[50px] w-[223px] text-[16px] font-extrabold flex items-center justify-center gap-[8px] hover:bg-[#27a361]'>
-                    Добавить новость
+                    {locale === 'ru' ? 'Добавить новость' : 'Yangilik qo\'shish'}
                     <Image
                         src={plus}
                         width={28}
                         height={28}
                         quality={100}
-                        alt={`jam_medical Image `}
+                        alt={locale === 'ru' ? 'Добавить новость' : 'Yangilik qo\'shish'}
                         className="w-full h-auto object-cover max-w-[28px]"
                     />
                 </button>
             </div>
+
+            {/* News Grid */}
             <div className='w-full grid gap-y-[35px] mdx:gap-y-[45px] xl:gap-y-[55px] gap-x-4 grid-cols-1 mdl:grid-cols-2 xl:grid-cols-4 h-auto'>
-                {news.map((item, i) => (
-                    <a key={i} href={`/news/Main`}>
+                {news.map((item) => (
+                    <a key={item.id} href={`/news/${item.slug}`}>
                         <NewCardMain
-                            title={item.head.title}
-                            subtitle={item.head.heading}
-                            date={item.head.date}
-                            imageSrc={item.head.photo?.url || newsPhoto}
+                            title={item.optionList[0]?.title || (locale === 'ru' ? 'Заголовок отсутствует' : 'Sarlavha mavjud emas')}
+                            subtitle={item.optionList[0]?.body || (locale === 'ru' ? 'Описание отсутствует' : 'Tavsif mavjud emas')}
+                            date={new Date(item.createdDate).toLocaleDateString(locale === 'ru' ? "ru-RU" : "uz-UZ")}
+                            imageSrc={item.optionList[0]?.photo?.url || "/default-image.png"}
                         />
                     </a>
-                    //     <a key={i} href={`/${locale}/news/${item.slug}`}>
-                    //     <NewCardMain
-                    //         title={item.head.title}
-                    //         subtitle={item.head.heading}
-                    //         date={item.head.date}
-                    //         imageSrc={item.head.photo?.url || newsPhoto} 
-                    //     />
-                    // </a>
                 ))}
+
+                {/* Add News Placeholder */}
                 <button className='h-[344px] w-auto border-[2px] border-dashed border-[#00863E] hover:border-[#2dbd70] flex flex-col-reverse items-center justify-center text-[22px] font-semibold text-[#00863E] hover:text-[#27a361]'>
-                    Добавить новость
+                    {locale === 'ru' ? 'Добавить новость' : 'Yangilik qo\'shish'}
                     <Image
                         src={plus_green}
                         width={28}
                         height={28}
                         quality={100}
-                        alt={`jam_medical Image `}
+                        alt={locale === 'ru' ? 'Добавить новость' : 'Yangilik qo\'shish'}
                         className="w-full h-auto object-cover max-w-[28px]"
                     />
                 </button>

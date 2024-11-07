@@ -8,7 +8,7 @@ import Image from "next/image";
 
 export default function Main() {
   // State to control the displayed component
-  const [activeComponent, setActiveComponent] = useState("doctors");
+  const [activeComponent, setActiveComponent] = useState("news");
 
   return (
     <div className="flex w-full h-full ">

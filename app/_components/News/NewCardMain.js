@@ -11,7 +11,7 @@ export default function NewCard({ key, title, subtitle, date, imageSrc }) {
                 height={800}
                 quality={100}
                 alt={`News Image ${key}`}
-                className="w-full h-auto object-cover"
+                className="h-full w-full object-cover max-w-[345px] max-h-[345px]"
             />
             <div className="w-full flex flex-col flex-grow justify-between mt-[10px] xl:mt-[15px]">
                 {/* Combined Title and Subtitle with Line Clamp */}

@@ -22,3 +22,14 @@ body {
   display: none;
 }
 
+.custom-border {
+  border-style: dashed;
+  border-width: 3px;
+  border-color: #00863E;
+  border-radius: 5px; /* при необходимости */
+  border-image-slice: 2;
+  border-image-repeat: round; /* делает узор повторяющимся */
+}
+.custom-border:hover {
+  border-color: #059146;
+}
