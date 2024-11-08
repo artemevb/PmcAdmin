@@ -7,10 +7,11 @@ import NewCardMain from '../News/NewCardMain'
 import plus from "@/public/svg/plus-white.svg";
 import plus_green from "@/public/svg/plus-green.svg";
 import Image from "next/image";
+import CreateNewsModal from './EditStartTextModile' // Import the updated modal
 
 export default function NewsComp() {
     const router = useRouter()
-    // Инициализируем локаль из состояния или локального хранилища
+    // Initialize locale from state or localStorage
     const [locale, setLocale] = useState(() => {
         if (typeof window !== 'undefined') {
             return localStorage.getItem('locale') || 'ru'
@@ -18,45 +19,46 @@ export default function NewsComp() {
         return 'ru'
     })
 
-    const [news, setNews] = useState([]) // Состояние для новостей
-    const [loading, setLoading] = useState(true) // Состояние загрузки
-    const [error, setError] = useState(null) // Состояние ошибки
+    const [news, setNews] = useState([]) // State for news
+    const [loading, setLoading] = useState(true) // Loading state
+    const [error, setError] = useState(null) // Error state
+    const [isModalOpen, setIsModalOpen] = useState(false) // Modal state
 
-    // Функция для загрузки данных с учетом локали
+    // Function to fetch news data based on locale
     const fetchNews = async (currentLocale) => {
         try {
-            const response = await axios.get(`https://pmc.result-me.uz/v1/newness/get-all`, {
+            const response = await axios.get('https://pmc.result-me.uz/v1/newness/get-all', {
                 headers: {
-                    'Accept-Language': currentLocale // Устанавливаем язык запроса
+                    'Accept-Language': currentLocale // Set request language
                 }
             })
-            setNews(response.data.data) // Обновляем состояние news с полученными данными
-            setLoading(false) // Сбрасываем состояние загрузки
-            console.log('Accept-Language:', currentLocale) // Выводим текущий язык в консоль
+            setNews(response.data.data) // Update news state with fetched data
+            setLoading(false) // Reset loading state
+            console.log('Accept-Language:', currentLocale) // Log current language
         } catch (err) {
-            setError(currentLocale === 'ru' ? "Ошибка при загрузке новостей." : "Yangiliklarni yuklashda xato yuz berdi.") // Обработка ошибки на основе локали
+            setError(currentLocale === 'ru' ? "Ошибка при загрузке новостей." : "Yangiliklarni yuklashda xato yuz berdi.") // Handle error based on locale
             setLoading(false)
         }
     }
 
-    // Запуск fetchNews при монтировании компонента и смене локали
+    // Fetch news on component mount and when locale changes
     useEffect(() => {
         setLoading(true)
         setError(null)
         fetchNews(locale)
     }, [locale])
 
-    // Функция для переключения локали
+    // Function to switch locale
     const switchLocale = (newLocale) => {
-        if (newLocale === locale) return // Не делаем ничего, если выбранная локаль уже активна
-        setLocale(newLocale) // Обновляем локаль в состоянии
+        if (newLocale === locale) return // Do nothing if the selected locale is already active
+        setLocale(newLocale) // Update locale state
         if (typeof window !== 'undefined') {
-            localStorage.setItem('locale', newLocale) // Сохраняем выбранную локаль в локальное хранилище
+            localStorage.setItem('locale', newLocale) // Save selected locale to localStorage
         }
     }
 
-    if (loading) return <div className='text-center'>{locale === 'ru' ? 'Загрузка...' : 'Yuklanmoqda...'}</div> // Индикатор загрузки на основе локали
-    if (error) return <div className='text-center text-red-500'>{error}</div> // Сообщение об ошибке
+    if (loading) return <div className='text-center'>{locale === 'ru' ? 'Загрузка...' : 'Yuklanmoqda...'}</div> // Loading indicator based on locale
+    if (error) return <div className='text-center text-red-500'>{error}</div> // Error message
 
     return (
         <div className='w-full max-w-[1440px] mx-auto px-2 flex flex-col gap-8 mb-[90px] mdx:mb-[150px] 2xl:mb-[190px]'>
@@ -87,7 +89,10 @@ export default function NewsComp() {
                 </div>
 
                 {/* Add News Button */}
-                <button className='bg-[#00863E] text-[#ffff] h-[50px] w-[223px] text-[16px] font-extrabold flex items-center justify-center gap-[8px] hover:bg-[#27a361]'>
+                <button
+                    onClick={() => setIsModalOpen(true)} // Open modal on click
+                    className='bg-[#00863E] text-[#ffff] h-[50px] w-[223px] text-[16px] font-extrabold flex items-center justify-center gap-[8px] hover:bg-[#27a361]'
+                >
                     {locale === 'ru' ? 'Добавить новость' : 'Yangilik qo\'shish'}
                     <Image
                         src={plus}
@@ -114,7 +119,9 @@ export default function NewsComp() {
                 ))}
 
                 {/* Add News Placeholder */}
-                <button className='h-[344px] w-auto border-[2px] border-dashed border-[#00863E] hover:border-[#2dbd70] flex flex-col-reverse items-center justify-center text-[22px] font-semibold text-[#00863E] hover:text-[#27a361]'>
+                <button
+                onClick={() => setIsModalOpen(true)}
+                className='h-[344px] w-auto border-[2px] border-dashed border-[#00863E] hover:border-[#2dbd70] flex flex-col-reverse items-center justify-center text-[22px] font-semibold text-[#00863E] hover:text-[#27a361]'>
                     {locale === 'ru' ? 'Добавить новость' : 'Yangilik qo\'shish'}
                     <Image
                         src={plus_green}
@@ -126,6 +133,19 @@ export default function NewsComp() {
                     />
                 </button>
             </div>
+
+            {/* Create News Modal */}
+            {isModalOpen && (
+                <CreateNewsModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onSave={(newNews) => {
+                        setNews([newNews, ...news]) // Prepend the new news item to the existing list
+                        setIsModalOpen(false)
+                    }}
+                    locale={locale}
+                />
+            )}
         </div>
     )
 }
