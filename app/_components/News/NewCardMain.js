@@ -5,14 +5,16 @@ import GreenArrow from "@/public/svg/arrow-right-green-news.svg";
 export default function NewCard({ key, title, subtitle, date, imageSrc }) {
     return (
         <div className="w-full bg-white h-full flex flex-col justify-between">
-            <Image
-                src={imageSrc}
-                width={800}
-                height={800}
-                quality={100}
-                alt={`News Image ${key}`}
-                className="h-full w-full object-cover max-w-[345px] max-h-[345px]"
-            />
+            {/* Image Wrapper with fixed dimensions */}
+            <div className="w-full h-[280px] 4xl:h-[345px] relative">
+                <Image
+                    src={imageSrc}
+                    layout="fill" // Makes the image fill the parent container
+                    quality={100}
+                    alt={`News Image ${key}`}
+                    className="object-cover" // Ensures the image covers the container proportionally
+                />
+            </div>
             <div className="w-full flex flex-col flex-grow justify-between mt-[10px] xl:mt-[15px]">
                 {/* Combined Title and Subtitle with Line Clamp */}
                 <div className="line-clamp-4">
@@ -42,3 +44,4 @@ export default function NewCard({ key, title, subtitle, date, imageSrc }) {
         </div>
     );
 }
+

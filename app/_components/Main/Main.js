@@ -13,7 +13,7 @@ export default function Main() {
   return (
     <div className="flex w-full h-full ">
       {/* Sidebar */}
-      <div className="w-1/4 bg-white">
+      <div className="w-[350px] bg-white">
         <ul >
           <li>
             <button

@@ -73,8 +73,8 @@ export default function MainPages() {
         fetchNews();
     }, [slug, locale]);
 
-    const handleEditClick = (block) => {
-        setCurrentBlock(block);
+    const handleEditClick = (block, isFirst) => {
+        setCurrentBlock({ ...block, isFirst });
         setIsModalOpen(true);
     };
 
@@ -217,7 +217,7 @@ export default function MainPages() {
 
                     {/* Список блоков */}
                     {news.optionList?.map((item, index) => (
-                        <div className="mt-[35px] xl:mt-[70px]" key={item.id}>
+                        <div className="mt-[35px] xl:mt-[70px] w-full h-full" key={item.id}>
                             <div className="flex flex-col justify-between items-start">
                                 {index !== 0 && item.title && (
                                     <h3 className={`text-[20px] mdx:text-[26px] font-bold text-[#252324]`}>
@@ -239,28 +239,30 @@ export default function MainPages() {
                                 </p>
                             )}
                             {index !== 0 && item.photo?.url && (
-                                <div className="mt-[30px] mb-[10px] flex flex-row justify-center">
+                                <div className="mt-[30px] mb-[10px] flex flex-row justify-center w-full h-full">
                                     <Image
                                         src={item.photo.url}
-                                        width={832}
-                                        height={450}
+                                        width={1035}
+                                        height={500}
                                         quality={100}
                                         alt="Block Image"
-                                        className="w-full h-auto max-w-[832px] max-h-[450px] 5xl:max-w-[1000px] object-cover "
+                                        className="w-full h-full max-w-[832px] max-h-[500px] 5xl:max-w-[1035px] object-cover "
                                     />
                                 </div>
                             )}
                             {/* Кнопки редактирования и удаления блока */}
                             <div className="flex gap-4 mt-4">
                                 <button
-                                    onClick={() => handleEditClick(item)}
-                                    className="w-[223px] py-3 bg-[#00863E] hover:bg-[#2f9c62] text-white rounded"
+                                    onClick={() => handleEditClick(item, index === 0)} // Передаем isFirst
+                                    className="w-[223px] py-3 bg-[#00863E] hover:bg-[#2f9c62] text-white "
                                 >
-                                    Редактировать блок
+                                    {index === 0 
+                                        ? ('Редактировать вступление') 
+                                        : ('Редактировать блок')}
                                 </button>
                                 <button
                                     onClick={() => handleDeleteClick(item.id)}
-                                    className="w-[223px] py-3 bg-red-500 hover:bg-red-700 text-white rounded"
+                                    className="w-[223px] py-3 bg-red-500 hover:bg-red-700 text-white"
                                 >
                                     Удалить блок
                                 </button>
@@ -290,7 +292,9 @@ export default function MainPages() {
                 locale={locale} // Передача текущей локали
                 newsId={news.id} // Передача ID новости
                 newsActive={news.active} // Передача состояния активности новости
+                isFirst={currentBlock?.isFirst} // Передача информации о первом блоке
             />
         </>
     )
 }
+
