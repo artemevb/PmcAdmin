@@ -44,7 +44,7 @@ export default function NewCard() {
                     </div>
                     <div>
                         <button className="w-full max-w-[223px] flex justify-center items-center bg-[#00863E] py-[12px] hover:bg-[#398f61] mt-[25px] xl:mt-[60px]">
-                            <p className="text-[#fff] font-extrabold">Записаться</p>
+                            <p className="text-[#fff] font-extrabold">Редактировать</p>
                         </button>
                     </div>
                 </div>

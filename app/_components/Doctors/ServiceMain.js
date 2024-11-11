@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import Image from "next/image";
 import plus_green from "@/public/svg/plus-green.svg";
+import pen from "@/public/svg/pen.svg";
+import close from "@/public/svg/close-modal.svg";
 
 export default function ServiceMain() {
     const [itemsLimit, setItemsLimit] = useState(12); // Default limit is 12
@@ -53,10 +55,30 @@ export default function ServiceMain() {
             <div className="grid mdx:gap-x-[16px] gap-y-[12px] mdx:gap-y-[20px] mdx:grid-cols-2 mt-[25px] mdx:mt-[30px] 2xl:grid-cols-4">
                 {services.map((service, index) => (
                     <div key={index} className="border border-[#EEE] p-[20px] flex flex-col justify-between min-h-[150px] mdx:min-h-[180px] 2xl:min-h-[200px]">
+                        <button className="w-full right-0 flex justify-end">
+                            <Image
+                                src={close}
+                                width={24}
+                                height={24}
+                                quality={100}
+                                alt={'Добавить новость'}
+                                className="w-full h-auto object-cover max-w-[24px]"
+                            />
+                        </button>
                         <h5 className="text-[18px] mdx:text-[18px] xl:text-[22px] font-semibold">{service.name}</h5>
                         <p className="text-[#00863E] text-[18px] mdx:text-[18px] xl:text-[22px] font-bold">{service.price}</p>
+                        <button className="w-full right-0 flex justify-end">
+                            <Image
+                                src={pen}
+                                width={24}
+                                height={24}
+                                quality={100}
+                                alt={'Добавить новость'}
+                                className="w-full h-auto object-cover max-w-[24px]"
+                            />
+                        </button>
                     </div>
-                    
+
                 ))}
                 <button className='h-[200px] w-auto border-[2px] border-dashed border-[#00863E] hover:border-[#2dbd70] flex flex-col-reverse items-center justify-center text-[22px] font-semibold text-[#00863E] hover:text-[#27a361]'>
                     Добавить новость

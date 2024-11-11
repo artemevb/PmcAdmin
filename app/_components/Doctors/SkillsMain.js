@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from 'react';
+import plus_green from "@/public/svg/plus-green.svg";
+import close_green from "@/public/svg/close_green.svg";
+import Image from "next/image";
 
 export default function SkillsMain() {
     const [selectedTab, setSelectedTab] = useState('education');
@@ -29,34 +32,118 @@ export default function SkillsMain() {
                 {selectedTab === 'education' && (
                     <div>
                         <div className="border-b pb-[15px] mb-[15px] mdl:pb-[30px] mdl:mb-[30px]">
-                            <div className="mdl:flex mdl:justify-between max-w-[952px]">
-                                <p className="text-[16px] mdx:text-[18px] xl:text-[20px] max-w-[345px] font-semibold">2015 - 2021 г.</p>
-                                <p className="text-[16px] mdx:text-[18px] xl:text-[20px] max-w-[345px] font-semibold">Ташкентский Педиатрический Медицинский Институт</p>
-                                <p className="text-[16px] mdx:text-[18px] xl:text-[20px] max-w-[345px] font-semibold">Педиатрия - Бакалавр</p>
+                            <div className="mdl:flex mdl:justify-between w-full items-center">
+                                <div className="max-w-[952px] w-full mdl:flex mdl:justify-between">
+                                    <p className="text-[16px] mdx:text-[18px] xl:text-[20px] max-w-[345px] font-semibold">2015 - 2021 г.</p>
+                                    <p className="text-[16px] mdx:text-[18px] xl:text-[20px] max-w-[345px] font-semibold">Ташкентский Педиатрический Медицинский Институт</p>
+                                    <p className="text-[16px] mdx:text-[18px] xl:text-[20px] max-w-[345px] font-semibold">Педиатрия - Бакалавр</p>
+                                </div>
+                                <div className="flex gap-[15px]">
+                                    <button className="w-[223px] flex justify-center items-center bg-[#00863E] py-[12px] hover:bg-[#398f61]">
+                                        <p className="text-[#fff] font-extrabold">Редактировать</p>
+                                    </button>
+                                    <button className="border p-[12px] w-[50px]">
+                                        <Image
+                                            src={close_green}
+                                            width={28}
+                                            height={28}
+                                            quality={100}
+                                            alt={'Добавить новость'}
+                                            className="w-full h-auto object-cover max-w-[28px]"
+                                        />
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div className="border-b pb-[15px] mb-[15px] mdl:pb-[30px] mdl:mb-[30px]">
-                            <div className="mdl:flex mdl:justify-between max-w-[952px]">
-                                <p className="text-[16px] mdx:text-[18px] xl:text-[20px] max-w-[345px] font-semibold">2021-2023 г.</p>
-                                <p className="text-[16px] mdx:text-[18px] xl:text-[20px] max-w-[345px] font-semibold">МГУ им Н.П.Огарёва</p>
-                                <p className="text-[16px] mdx:text-[18px] xl:text-[20px] max-w-[345px] font-semibold">Оториноларингология - Ординатура</p>
+                            <div className="mdl:flex mdl:justify-between w-full items-center">
+                                <div className="max-w-[952px] w-full mdl:flex mdl:justify-between">
+                                    <p className="text-[16px] mdx:text-[18px] xl:text-[20px] max-w-[345px] font-semibold">2021-2023 г.</p>
+                                    <p className="text-[16px] mdx:text-[18px] xl:text-[20px] max-w-[345px] font-semibold">МГУ им Н.П.Огарёва</p>
+                                    <p className="text-[16px] mdx:text-[18px] xl:text-[20px] max-w-[345px] font-semibold">Оториноларингология - Ординатура</p>
+                                </div>
+                                <div className="flex gap-[15px]">
+                                    <button className="w-[223px] flex justify-center items-center bg-[#00863E] py-[12px] hover:bg-[#398f61]">
+                                        <p className="text-[#fff] font-extrabold">Редактировать</p>
+                                    </button>
+                                    <button className="border p-[12px] w-[50px]">
+                                        <Image
+                                            src={close_green}
+                                            width={28}
+                                            height={28}
+                                            quality={100}
+                                            alt={'Добавить новость'}
+                                            className="w-full h-auto object-cover max-w-[28px]"
+                                        />
+                                    </button>
+                                </div>
                             </div>
                         </div>
+                        <button className="text-[22px] font-bold text-[#00863E] hover:text-[#32a065] flex gap-[10px] border-b pb-[30px] items-center justify-center w-full">
+                            <Image
+                                src={plus_green}
+                                width={28}
+                                height={28}
+                                quality={100}
+                                alt={'Добавить новость'}
+                                className="w-full h-auto object-cover max-w-[28px]"
+                            />
+                            Добавить образование</button>
                     </div>
                 )}
 
                 {selectedTab === 'specialization' && (
                     <div>
                         <div className="border-b pb-[15px] mb-[15px] mdl:pb-[30px] mdl:mb-[30px]">
-                            <div className="mdl:flex mdl:justify-between max-w-[952px]">
+                            <div className="mdl:flex mdl:justify-between ">
                                 <p className="text-[16px] mdx:text-[18px] xl:text-[20px] max-w-[345px] font-semibold">ЛОР врач</p>
+                                <div className="flex gap-[15px]">
+                                    <button className="w-[223px] flex justify-center items-center bg-[#00863E] py-[12px] hover:bg-[#398f61]">
+                                        <p className="text-[#fff] font-extrabold">Редактировать</p>
+                                    </button>
+                                    <button className="border p-[12px] w-[50px]">
+                                        <Image
+                                            src={close_green}
+                                            width={28}
+                                            height={28}
+                                            quality={100}
+                                            alt={'Добавить новость'}
+                                            className="w-full h-auto object-cover max-w-[28px]"
+                                        />
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div className="border-b pb-[15px] mb-[15px] mdl:pb-[30px] mdl:mb-[30px]">
-                            <div className="mdl:flex mdl:justify-between max-w-[952px]">
+                            <div className="mdl:flex mdl:justify-between ">
                                 <p className="text-[16px] mdx:text-[18px] xl:text-[20px] max-w-[345px] font-semibold">Отоларинголог</p>
+                                <div className="flex gap-[15px]">
+                                    <button className="w-[223px] flex justify-center items-center bg-[#00863E] py-[12px] hover:bg-[#398f61]">
+                                        <p className="text-[#fff] font-extrabold">Редактировать</p>
+                                    </button>
+                                    <button className="border p-[12px] w-[50px]">
+                                        <Image
+                                            src={close_green}
+                                            width={28}
+                                            height={28}
+                                            quality={100}
+                                            alt={'Добавить новость'}
+                                            className="w-full h-auto object-cover max-w-[28px]"
+                                        />
+                                    </button>
+                                </div>
                             </div>
                         </div>
+                        <button className="text-[22px] font-bold text-[#00863E] hover:text-[#32a065] flex gap-[10px] border-b pb-[30px] items-center justify-center w-full">
+                            <Image
+                                src={plus_green}
+                                width={28}
+                                height={28}
+                                quality={100}
+                                alt={'Добавить новость'}
+                                className="w-full h-auto object-cover max-w-[28px]"
+                            />
+                            Добавить специализацию</button>
                     </div>
                 )}
             </div>
