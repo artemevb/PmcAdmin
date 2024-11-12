@@ -29,36 +29,52 @@ const ModalEditEducation = ({ isOpen, onClose, onSave, education, locale }) => {
     const t = translations[locale];
 
     const [formData, setFormData] = useState({
-        id: education?.id || null,
-        startYear: education?.startYear || '',
-        finishYear: education?.finishYear || '',
+        id: null,
+        startYear: '',
+        finishYear: '',
         institution: {
-            uz: education?.institution?.uz || '',
-            ru: education?.institution?.ru || '',
+            uz: '',
+            ru: '',
         },
         qualification: {
-            uz: education?.qualification?.uz || '',
-            ru: education?.qualification?.ru || '',
+            uz: '',
+            ru: '',
         },
     });
 
     useEffect(() => {
-        if (education) {
+        if (isOpen && education) {
+            console.log('Текущие данные образования:', education);
+
+            // Проверка структуры данных
+            const institutionIsObject = typeof education.institution === 'object';
+            const qualificationIsObject = typeof education.qualification === 'object';
+
             setFormData({
                 id: education.id,
                 startYear: education.startYear,
                 finishYear: education.finishYear,
-                institution: {
-                    uz: education.institution.uz,
-                    ru: education.institution.ru,
-                },
-                qualification: {
-                    uz: education.qualification.uz,
-                    ru: education.qualification.ru,
-                },
+                institution: institutionIsObject
+                    ? {
+                          uz: education.institution.uz || '',
+                          ru: education.institution.ru || '',
+                      }
+                    : {
+                          uz: '',
+                          ru: '',
+                      },
+                qualification: qualificationIsObject
+                    ? {
+                          uz: education.qualification.uz || '',
+                          ru: education.qualification.ru || '',
+                      }
+                    : {
+                          uz: '',
+                          ru: '',
+                      },
             });
         }
-    }, [education]);
+    }, [isOpen, education]);
 
     if (!isOpen) return null;
 

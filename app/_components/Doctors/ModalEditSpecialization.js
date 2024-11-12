@@ -57,10 +57,10 @@ export default function ModalEditSpecialization({ isOpen, onClose, onSave, speci
                 >
                     <Image src={close_icon} alt="Close" width={20} height={20} />
                 </button>
-                <h2 className="text-xl font-semibold mb-4">{t.editSpecialization}</h2>
+                <h2 className="text-xl font-semibold mb-4">Изменить специализацию</h2>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <div>
-                        <label className="block mb-1">{t.nameUz}</label>
+                        <label className="block mb-1">Название (RU)</label>
                         <input
                             type="text"
                             value={nameUz}
@@ -70,7 +70,7 @@ export default function ModalEditSpecialization({ isOpen, onClose, onSave, speci
                         />
                     </div>
                     <div>
-                        <label className="block mb-1">{t.nameRu}</label>
+                        <label className="block mb-1">Название (RU)</label>
                         <input
                             type="text"
                             value={nameRu}
@@ -85,13 +85,13 @@ export default function ModalEditSpecialization({ isOpen, onClose, onSave, speci
                             onClick={onClose}
                             className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
                         >
-                            {t.cancel}
+                            Отмена
                         </button>
                         <button
                             type="submit"
                             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                         >
-                            {t.save}
+                            Сохранить
                         </button>
                     </div>
                 </form>

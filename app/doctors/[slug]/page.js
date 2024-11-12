@@ -145,10 +145,12 @@ export default function DoctorPage() {
                 refreshDoctor={fetchDoctor} // Передача функции для обновления данных
             />
             <ServiceMain
-                services={doctor.serviceOfDoctorList} // Передача serviceOfDoctorList как services
+                services={doctor.serviceOfDoctorList || []} // Ensure it's an array
                 locale={locale}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                doctorId={doctor.id} // Pass the doctorId
+                refreshDoctor={fetchDoctor} // Ensure this is passed for refreshing data
             />
         </div>
     );

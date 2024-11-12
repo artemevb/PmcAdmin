@@ -7,7 +7,8 @@ import close_green from '@/public/svg/close_green.svg';
 import ModalAddSpecialization from './ModalAddSpecialization';
 import ModalAddEducation from './ModalAddEducation';
 import ConfirmDeleteModal from './ModalConfirmDelete';
-import ModalEditSpecialization from './ModalEditSpecialization'; // Import the new edit modal
+import ModalEditSpecialization from './ModalEditSpecialization';
+import ModalEditEducation from './ModalEditEducation'; // Импорт нового модального окна
 
 const translations = {
     ru: {
@@ -30,6 +31,8 @@ const translations = {
         errorAddingEducation: 'Ошибка при добавлении образования',
         errorUpdatingSpecialization: 'Ошибка при обновлении специализации',
         specializationUpdated: 'Специализация успешно обновлена',
+        educationUpdated: 'Образование успешно обновлено',
+        errorUpdatingEducation: 'Ошибка при обновлении образования',
     },
     uz: {
         addEducation: 'Ta\'lim qo\'shish',
@@ -51,6 +54,8 @@ const translations = {
         errorAddingEducation: 'Ta\'lim qo\'shishda xatolik',
         errorUpdatingSpecialization: 'Maxsuslikni yangilashda xatolik',
         specializationUpdated: 'Maxsuslik muvaffaqiyatli yangilandi',
+        educationUpdated: 'Ta\'lim muvaffaqiyatli yangilandi',
+        errorUpdatingEducation: 'Ta\'limni yangilashda xatolik',
     },
 };
 
@@ -67,12 +72,15 @@ export default function SkillsMain({
     const [isModalOpenSpecialization, setIsModalOpenSpecialization] = useState(false);
     const [isModalOpenEducation, setIsModalOpenEducation] = useState(false);
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
-    const [deleteType, setDeleteType] = useState(null); // 'education' or 'specialization'
+    const [deleteType, setDeleteType] = useState(null); // 'education' или 'specialization'
     const [deleteId, setDeleteId] = useState(null);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [currentSpecialization, setCurrentSpecialization] = useState(null); // Specialization being edited
+    const [isEditSpecializationModalOpen, setIsEditSpecializationModalOpen] = useState(false);
+    const [currentSpecialization, setCurrentSpecialization] = useState(null); // Специализация для редактирования
+    const [isEditEducationModalOpen, setIsEditEducationModalOpen] = useState(false); // Новое состояние для образования
+    const [currentEducation, setCurrentEducation] = useState(null); // Образование для редактирования
     const t = translations[locale];
 
+    // Функция для добавления специализации
     const handleSaveSpecialization = async (specializationName) => {
         try {
             const response = await fetch(`https://pmc.result-me.uz/v1/doctor/specialization/create/${doctorId}`, {
@@ -89,9 +97,9 @@ export default function SkillsMain({
             });
 
             if (response.ok) {
-                alert(t.specializationAdded || 'Специализация успешно добавлена'); // Ensure translation key exists
+                alert(t.specializationAdded || 'Специализация успешно добавлена');
                 setIsModalOpenSpecialization(false);
-                refreshDoctor(); // Refresh the doctor's data
+                refreshDoctor(); // Обновляем данные врача
             } else {
                 const errorData = await response.json();
                 alert(`Ошибка при добавлении специализации: ${errorData.message || 'Неизвестная ошибка'}`);
@@ -102,6 +110,7 @@ export default function SkillsMain({
         }
     };
 
+    // Функция для удаления специализации
     const handleDeleteSpecialization = async (specializationId) => {
         try {
             const response = await fetch(`https://pmc.result-me.uz/v1/doctor/specialization/delete/${specializationId}`, {
@@ -110,7 +119,7 @@ export default function SkillsMain({
 
             if (response.ok) {
                 alert(t.specializationDeleted);
-                refreshDoctor(); // Refresh the doctor's data
+                refreshDoctor(); // Обновляем данные врача
             } else {
                 const errorData = await response.json();
                 alert(`${t.errorDeletingSpecialization}: ${errorData.message || 'Неизвестная ошибка'}`);
@@ -121,28 +130,35 @@ export default function SkillsMain({
         }
     };
 
-    const handleDeleteEducation = async (educationId) => {
+    // Функция для обновления специализации
+    const handleUpdateSpecialization = async (updatedSpec) => {
         try {
-            const response = await fetch(`https://pmc.result-me.uz/v1/doctor/education/delete/${educationId}`, {
-                method: 'DELETE',
+            const response = await fetch(`https://pmc.result-me.uz/v1/doctor/specialization/update`, {
+                method: 'PUT', // Используем 'PUT' для обновления
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedSpec),
             });
 
             if (response.ok) {
-                alert(t.educationDeleted);
-                refreshDoctor(); // Refresh the doctor's data
+                alert(t.specializationUpdated);
+                setIsEditSpecializationModalOpen(false);
+                refreshDoctor(); // Обновляем данные врача
             } else {
                 const errorData = await response.json();
-                alert(`${t.errorDeletingEducation}: ${errorData.message || 'Неизвестная ошибка'}`);
+                alert(`${t.errorUpdatingSpecialization}: ${errorData.message || 'Неизвестная ошибка'}`);
             }
         } catch (error) {
-            console.error('Ошибка при удалении:', error);
-            alert(t.errorDeletingEducation);
+            console.error('Ошибка запроса:', error);
+            alert(t.errorUpdatingSpecialization);
         }
     };
 
+    // Функция для добавления образования
     const handleSaveEducation = async (educationData) => {
         try {
-            console.log('Отправляем образование:', educationData); // Log
+            console.log('Отправляем образование:', educationData); // Логирование
             const response = await fetch(`https://pmc.result-me.uz/v1/doctor/education/create/${doctorId}`, {
                 method: 'POST',
                 headers: {
@@ -154,7 +170,7 @@ export default function SkillsMain({
             if (response.ok) {
                 alert(t.educationAdded);
                 setIsModalOpenEducation(false);
-                refreshDoctor(); // Refresh the doctor's data
+                refreshDoctor(); // Обновляем данные врача
             } else {
                 const errorData = await response.json();
                 alert(`${t.errorAddingEducation}: ${errorData.message || 'Неизвестная ошибка'}`);
@@ -165,12 +181,59 @@ export default function SkillsMain({
         }
     };
 
+    // Функция для удаления образования
+    const handleDeleteEducation = async (educationId) => {
+        try {
+            const response = await fetch(`https://pmc.result-me.uz/v1/doctor/education/delete/${educationId}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                alert(t.educationDeleted);
+                refreshDoctor(); // Обновляем данные врача
+            } else {
+                const errorData = await response.json();
+                alert(`${t.errorDeletingEducation}: ${errorData.message || 'Неизвестная ошибка'}`);
+            }
+        } catch (error) {
+            console.error('Ошибка при удалении:', error);
+            alert(t.errorDeletingEducation);
+        }
+    };
+
+    // Функция для обновления образования
+    const handleUpdateEducation = async (updatedEducation) => {
+        try {
+            const response = await fetch(`https://pmc.result-me.uz/v1/doctor/education/update`, {
+                method: 'PUT', // Используем 'PUT' для обновления
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedEducation),
+            });
+
+            if (response.ok) {
+                alert(t.educationUpdated);
+                setIsEditEducationModalOpen(false);
+                refreshDoctor(); // Обновляем данные врача
+            } else {
+                const errorData = await response.json();
+                alert(`${t.errorUpdatingEducation}: ${errorData.message || 'Неизвестная ошибка'}`);
+            }
+        } catch (error) {
+            console.error('Ошибка запроса:', error);
+            alert(t.errorUpdatingEducation);
+        }
+    };
+
+    // Функция для открытия модального окна подтверждения удаления
     const openConfirmDelete = (type, id) => {
         setDeleteType(type);
         setDeleteId(id);
         setIsConfirmDeleteOpen(true);
     };
 
+    // Функция для подтверждения удаления
     const handleConfirmDelete = async () => {
         if (deleteType === 'education') {
             await handleDeleteEducation(deleteId);
@@ -182,6 +245,7 @@ export default function SkillsMain({
         setDeleteId(null);
     };
 
+    // Функция для получения сообщения подтверждения удаления
     const getConfirmDeleteMessage = () => {
         if (deleteType === 'education') {
             return t.confirmDeleteMessageEducation;
@@ -191,47 +255,21 @@ export default function SkillsMain({
         return '';
     };
 
-    // New function to handle saving the edited specialization
-    const handleUpdateSpecialization = async (updatedSpec) => {
-        try {
-            const response = await fetch(`https://pmc.result-me.uz/v1/doctor/specialization/update`, {
-                method: 'PUT', // Use 'PUT' or 'POST' based on your API
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedSpec),
-            });
-
-            if (response.ok) {
-                alert(t.specializationUpdated);
-                setIsEditModalOpen(false);
-                refreshDoctor(); // Refresh the doctor's data
-            } else {
-                const errorData = await response.json();
-                alert(`${t.errorUpdatingSpecialization}: ${errorData.message || 'Неизвестная ошибка'}`);
-            }
-        } catch (error) {
-            console.error('Ошибка запроса:', error);
-            alert(t.errorUpdatingSpecialization);
-        }
+    // Функция для открытия модального окна редактирования специализации
+    const handleEditSpecialization = (spec) => {
+        setCurrentSpecialization(spec);
+        setIsEditSpecializationModalOpen(true);
     };
 
-    // Modify the onEdit handler for specializations
-    const handleEdit = (type, id) => {
-        if (type === 'specialization') {
-            const spec = specializationList.find((s) => s.id === id);
-            if (spec) {
-                setCurrentSpecialization(spec);
-                setIsEditModalOpen(true);
-            }
-        } else {
-            onEdit(type, id); // Handle other edit types if any
-        }
+    // Функция для открытия модального окна редактирования образования
+    const handleEditEducation = (edu) => {
+        setCurrentEducation(edu);
+        setIsEditEducationModalOpen(true);
     };
 
     return (
         <div className="w-full bg-white h-full flex flex-col justify-between px-[16px] max-w-[1440px] mx-auto mt-[100px] mdx:mt-[130px] xl:mt-[150px]">
-            {/* Navigation Tabs */}
+            {/* Навигационные вкладки */}
             <div className="flex gap-[50px] mb-8">
                 <button
                     className={`transition-opacity text-[20px] mdx:text-[25px] xl:text-[45px] font-semibold ${
@@ -251,7 +289,7 @@ export default function SkillsMain({
                 </button>
             </div>
 
-            {/* Education Tab */}
+            {/* Вкладка Образование */}
             {activeTab === 'education' && (
                 <div>
                     {educationList && educationList.length > 0 ? (
@@ -272,7 +310,7 @@ export default function SkillsMain({
                                     <div className="flex gap-[15px]">
                                         <button
                                             className="w-[223px] flex justify-center items-center bg-[#00863E] py-[12px] hover:bg-[#398f61]"
-                                            onClick={() => onEdit('education', education.id)}
+                                            onClick={() => handleEditEducation(education)}
                                         >
                                             <p className="text-[#fff] font-extrabold">{t.edit}</p>
                                         </button>
@@ -313,7 +351,7 @@ export default function SkillsMain({
                 </div>
             )}
 
-            {/* Specializations Tab */}
+            {/* Вкладка Специализации */}
             {activeTab === 'specialization' && (
                 <div>
                     {specializationList && specializationList.length > 0 ? (
@@ -326,7 +364,7 @@ export default function SkillsMain({
                                     <div className="flex gap-[15px]">
                                         <button
                                             className="w-[223px] flex justify-center items-center bg-[#00863E] py-[12px] hover:bg-[#398f61]"
-                                            onClick={() => handleEdit('specialization', spec.id)}
+                                            onClick={() => handleEditSpecialization(spec)}
                                         >
                                             <p className="text-[#fff] font-extrabold">{t.edit}</p>
                                         </button>
@@ -367,7 +405,7 @@ export default function SkillsMain({
                 </div>
             )}
 
-            {/* Add Specialization Modal */}
+            {/* Модальные окна */}
             <ModalAddSpecialization
                 isOpen={isModalOpenSpecialization}
                 onClose={() => setIsModalOpenSpecialization(false)}
@@ -375,7 +413,6 @@ export default function SkillsMain({
                 locale={locale}
             />
 
-            {/* Add Education Modal */}
             <ModalAddEducation
                 isOpen={isModalOpenEducation}
                 onClose={() => setIsModalOpenEducation(false)}
@@ -383,7 +420,6 @@ export default function SkillsMain({
                 locale={locale}
             />
 
-            {/* Confirm Delete Modal */}
             <ConfirmDeleteModal
                 isOpen={isConfirmDeleteOpen}
                 onClose={() => setIsConfirmDeleteOpen(false)}
@@ -391,14 +427,21 @@ export default function SkillsMain({
                 message={getConfirmDeleteMessage()}
             />
 
-            {/* Edit Specialization Modal */}
             <ModalEditSpecialization
-                isOpen={isEditModalOpen}
-                onClose={() => setIsEditModalOpen(false)}
+                isOpen={isEditSpecializationModalOpen}
+                onClose={() => setIsEditSpecializationModalOpen(false)}
                 onSave={handleUpdateSpecialization}
                 specialization={currentSpecialization}
                 locale={locale}
             />
+
+            <ModalEditEducation
+                isOpen={isEditEducationModalOpen}
+                onClose={() => setIsEditEducationModalOpen(false)}
+                onSave={handleUpdateEducation}
+                education={currentEducation}
+                locale={locale}
+            />
         </div>
-    );
+    )
 }
