@@ -1,11 +1,14 @@
+// app_components/Doctors/AddBlockModal.js
+
 'use client'
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
 import close from "@/public/svg/close-black-bold.svg";
+import translations from './translations'; // Импортируем объект переводов
 
-const AddBlockModal = ({ isOpen, onClose, onSave, locale, newsId, existingBlocks }) => {
+const AddBlockModal = ({ isOpen, onClose, onSave, locale, newsId, existingBlocks, fetchNews }) => {
     const [selectedLanguage, setSelectedLanguage] = useState('ru'); // Default language
     const [formData, setFormData] = useState({
         title_ru: '',
@@ -33,6 +36,15 @@ const AddBlockModal = ({ isOpen, onClose, onSave, locale, newsId, existingBlocks
             setError(null);
         }
     }, [isOpen]);
+
+    useEffect(() => {
+        // Очистка предварительного просмотра при размонтировании компонента или изменении preview
+        return () => {
+            if (preview) {
+                URL.revokeObjectURL(preview);
+            }
+        };
+    }, [preview]);
 
     if (!isOpen) return null;
 
@@ -78,8 +90,8 @@ const AddBlockModal = ({ isOpen, onClose, onSave, locale, newsId, existingBlocks
 
         if (!isAtLeastOneTextFilled && !formData.photo) {
             setError(locale === 'ru' 
-                ? 'Пожалуйста, заполните хотя бы одно текстовое поле или загрузите фото.' 
-                : 'Iltimos, kamida bitta matn maydonini to\'ldiring yoki foto yuklang.');
+                ? translations[locale].pleaseFillAtLeastOneField // 'Пожалуйста, заполните хотя бы одно текстовое поле или загрузите фото.'
+                : translations[locale].pleaseFillAtLeastOneFieldUz); // 'Iltimos, kamida bitta matn maydonini to\'ldiring yoki foto yuklang.'
             return;
         }
 
@@ -127,19 +139,23 @@ const AddBlockModal = ({ isOpen, onClose, onSave, locale, newsId, existingBlocks
                 // Предполагается, что API возвращает только созданный блок
                 const newBlock = response.data.data;
                 onSave(newBlock); // Обновление состояния в родительском компоненте
+
+                // Вызовите fetchNews для обновления данных
+                fetchNews();
+
                 setIsSaving(false);
-                onClose(); // Закрытие модального окна
+                onClose();
             } else {
                 console.error('Error adding block:', response);
                 setError(locale === 'ru' 
-                    ? 'Ошибка при добавлении блока.' 
-                    : 'Blok qo\'shishda xato yuz berdi.');
+                    ? translations[locale].errorAddingBlock // 'Ошибка при добавлении блока.'
+                    : translations[locale].errorAddingBlockUz); // 'Blok qo\'shishda xato yuz berdi.'
             }
         } catch (err) {
             console.error('Error adding block:', err);
             setError(locale === 'ru' 
-                ? 'Ошибка при добавлении блока.' 
-                : 'Blok qo\'shishda xato yuz berdi.');
+                ? translations[locale].errorAddingBlock // 'Ошибка при добавлении блока.'
+                : translations[locale].errorAddingBlockUz); // 'Blok qo\'shishda xato yuz berdi.'
         } finally {
             setIsSaving(false);
         }
@@ -224,13 +240,13 @@ const AddBlockModal = ({ isOpen, onClose, onSave, locale, newsId, existingBlocks
                             <button
                                 onClick={handleRemovePhoto}
                                 className="absolute top-2 right-2 bg-white rounded-full p-1 hover:bg-gray-200"
-                                title="Удалить фото"
+                                title={locale === 'ru' ? 'Удалить фото' : 'Fotoni o\'chirish'}
                             >
                                 <Image
                                     src={close}
                                     width={20}
                                     height={20}
-                                    alt="Удалить фото"
+                                    alt={locale === 'ru' ? 'Удалить фото' : 'Fotoni o\'chirish'}
                                 />
                             </button>
                         </div>

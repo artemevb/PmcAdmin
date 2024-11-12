@@ -1,12 +1,15 @@
+// app_components/Doctors/Main.js
+
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react';
 import Image from "next/image";
 import plus_green from "@/public/svg/plus-green.svg";
-import axios from 'axios'
-import { useParams } from 'next/navigation'
-import EditBlockModal from './EditBlockModal'
-import AddBlockModal from './AddBlockModal'
+import axios from 'axios';
+import { useParams } from 'next/navigation';
+import EditBlockModal from './EditBlockModal';
+import AddBlockModal from './AddBlockModal';
+import translations from './translations'; // Импортируем объект переводов
 
 const formatTextWithNewlines = (text) => {
     if (text && typeof text === 'object') {
@@ -51,29 +54,31 @@ export default function MainPages() {
         }
     };
 
-    useEffect(() => {
+    // Шаг 1: Определение fetchNews с использованием useCallback
+    const fetchNews = useCallback(async () => {
         if (!slug) return;
 
-        const fetchNews = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const response = await axios.get(`https://pmc.result-me.uz/v1/newness/get/${slug}`, {
-                    headers: { 'Accept-Language': locale },
-                });
-                const data = response.data.data;
-                console.log("Fetched news data:", data);
-                setNews(data);
-                setLoading(false);
-            } catch (err) {
-                console.error('Error fetching news:', err);
-                setError('Вернитесь на предыдущую страницу(на главную страницу)');
-                setLoading(false);
-            }
-        };
-
-        fetchNews();
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await axios.get(`https://pmc.result-me.uz/v1/newness/get/${slug}`, {
+                headers: { 'Accept-Language': locale },
+            });
+            const data = response.data.data;
+            console.log("Fetched news data:", data);
+            setNews(data);
+            setLoading(false);
+        } catch (err) {
+            console.error('Error fetching news:', err);
+            setError(translations[locale].confirmDelete); // Используем перевод
+            setLoading(false);
+        }
     }, [slug, locale]);
+
+    // Шаг 1: Вызов fetchNews при изменении зависимости
+    useEffect(() => {
+        fetchNews();
+    }, [fetchNews]);
 
     const handleEditClick = (block, isFirst) => {
         setCurrentBlock({ ...block, isFirst });
@@ -87,7 +92,7 @@ export default function MainPages() {
 
     const handleSaveBlock = (updatedNews) => {
         setNews(updatedNews);
-        setUpdateStatus({ success: true, message: locale === 'ru' ? 'Блок успешно обновлен.' : 'Blok muvaffaqiyatli yangilandi.' });
+        setUpdateStatus({ success: true, message: translations[locale].blockSuccessfullyUpdated });
         setTimeout(() => {
             setUpdateStatus({ success: null, message: '' });
         }, 3000);
@@ -97,8 +102,8 @@ export default function MainPages() {
 
     const handleDeleteClick = async (blockId) => {
         const confirmDelete = window.confirm(locale === 'ru'
-            ? 'Вы уверены, что хотите удалить этот блок?'
-            : 'Ushbu blokni o\'chirishga ishonchingiz komilmi?');
+            ? translations[locale].confirmDelete // 'Вы уверены, что хотите удалить этот блок?'
+            : translations[locale].confirmDelete); // 'Ushbu blokni o\'chirishga ishonchingiz komilmi?'
 
         if (!confirmDelete) return;
 
@@ -114,8 +119,8 @@ export default function MainPages() {
 
             setUpdateStatus({
                 success: true, message: locale === 'ru'
-                    ? 'Блок успешно удален.'
-                    : 'Blok muvaffaqiyatli o\'chirildi.'
+                    ? translations[locale].blockSuccessfullyDeleted // 'Блок успешно удален.'
+                    : translations[locale].blockSuccessfullyDeleted // 'Blok muvaffaqiyatli o\'chirildi.'
             });
 
             setTimeout(() => {
@@ -125,8 +130,8 @@ export default function MainPages() {
             console.error('Error deleting block:', err);
             setUpdateStatus({
                 success: false, message: locale === 'ru'
-                    ? 'Не удалось удалить блок.'
-                    : 'Blok o\'chirilishda xato yuz berdi.'
+                    ? translations[locale].errorDeletingBlock // 'Не удалось удалить блок.'
+                    : translations[locale].errorDeletingBlock // 'Blok o\'chirilishda xato yuz berdi.'
             });
 
             setTimeout(() => {
@@ -143,24 +148,24 @@ export default function MainPages() {
         setIsAddModalOpen(false);
     };
 
+    // Шаг 2: Изменение handleSaveNewBlock для вызова fetchNews
     const handleSaveNewBlock = (newBlock) => {
-        setNews((prevNews) => ({
-            ...prevNews,
-            optionList: [...prevNews.optionList, newBlock],
-        }));
-
-        setUpdateStatus({ success: true, message: locale === 'ru' ? 'Блок успешно добавлен.' : 'Blok muvaffaqiyatli qo\'shildi.' });
+        // Вместо непосредственного обновления состояния, вызываем fetchNews для получения актуальных данных
+        setUpdateStatus({ success: true, message: translations[locale].blockSuccessfullyAdded });
 
         setTimeout(() => {
             setUpdateStatus({ success: null, message: '' });
         }, 3000);
 
         setIsAddModalOpen(false);
+
+        // Вызовите fetchNews для обновления данных после добавления блока
+        fetchNews();
     };
 
     if (loading) return <div className="text-center">Загрузка...</div>;
     if (error) return <div className="text-center text-red-500">{error}</div>;
-    if (!news) return <div className="text-center">Новость не найдена.</div>;
+    if (!news) return <div className="text-center">{locale === 'ru' ? 'Новость не найдена.' : 'Yangilik topilmadi.'}</div>;
 
     return (
         <>
@@ -276,14 +281,14 @@ export default function MainPages() {
                                     className="w-[223px] py-3 bg-[#00863E] hover:bg-[#2f9c62] text-white "
                                 >
                                     {index === 0
-                                        ? ('Редактировать вступление')
-                                        : ('Редактировать блок')}
+                                        ? (locale === 'ru' ? 'Редактировать вступление' : 'Tanishuvni tahrirlash')
+                                        : (locale === 'ru' ? 'Редактировать блок' : 'Blokni tahrirlash')}
                                 </button>
                                 <button
                                     onClick={() => handleDeleteClick(item.id)}
                                     className="w-[223px] py-3 bg-red-500 hover:bg-red-700 text-white"
                                 >
-                                    Удалить блок
+                                    {locale === 'ru' ? 'Удалить блок' : 'Blokni o\'chirish'}
                                 </button>
                             </div>
                         </div>
@@ -300,7 +305,7 @@ export default function MainPages() {
                             alt="Green Arrow"
                             className="w-[30px] h-[30px]"
                         />
-                        Добавить блок
+                        {locale === 'ru' ? 'Добавить блок' : 'Blok qo\'shish'}
                     </button>
                 </div>
             </div>
@@ -325,7 +330,9 @@ export default function MainPages() {
                 locale={locale}
                 newsId={news.id}
                 existingBlocks={news.optionList}
+                fetchNews={fetchNews} // Передаём fetchNews как проп
             />
         </>
     )
 }
+

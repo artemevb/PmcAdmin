@@ -138,7 +138,7 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
                 onSave(response.data.data); // Передача новых данных новости в родительский компонент
                 onClose(); // Закрытие модального окна
             } else {
-                setError(locale === 'ru' ? 'Ошибка при создании новости.' : 'Yangilikni yaratishda xato yuz berdi.');
+                setError('Ошибка при создании новости.');
             }
         } catch (err) {
             console.error(err);
@@ -149,10 +149,10 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
                     : `Xato: ${err.response.statusText}`);
             } else if (err.request) {
                 // Запрос был отправлен, но ответа не было
-                setError(locale === 'ru' ? 'Нет ответа от сервера.' : 'Serverdan javob yo\'q.');
+                setError('Нет ответа от сервера.');
             } else {
                 // Произошла другая ошибка
-                setError(locale === 'ru' ? 'Ошибка при создании новости.' : 'Yangilikni yaratishda xato yuz berdi.');
+                setError('Ошибка при создании новости.');
             }
         } finally {
             setIsSubmitting(false);
@@ -166,7 +166,7 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
             <div className="bg-white w-full max-w-[1236px] overflow-auto scrollbar-hide max-h-[90%]">
                 <div className="flex justify-between items-center p-6 border-b">
                     <h2 className="text-2xl font-bold">
-                        {locale === 'ru' ? 'Создать новость' : 'Yangilik yaratish'}
+                        {'Создать новость'}
                     </h2>
                     <button
                         onClick={onClose}
@@ -189,7 +189,7 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
                         return (
                             <div key={index} className="mb-6 border p-4 rounded-lg relative">
                                 <h3 className="text-lg font-semibold mb-4">
-                                    {isFirst ? (locale === 'ru' ? 'Вступление' : 'Tanishuv') : `${locale === 'ru' ? 'Блок' : 'Blok'} ${index + 1}`}
+                                    {isFirst ? ('Вступление') : `${'Блок'} ${index + 1}`}
                                 </h3>
 
                                 {/* Кнопка удаления блока */}
@@ -197,7 +197,7 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
                                     <button
                                         onClick={() => removeBlock(index)}
                                         className="absolute top-1 right-4 text-red-500 hover:text-red-700 text-[30px]"
-                                        title={locale === 'ru' ? 'Удалить блок' : 'Blokni o\'chirish'}
+                                        title={'Удалить блок'}
                                     >
                                         &times;
                                     </button>
@@ -206,7 +206,7 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
                                 {/* Поля заголовка */}
                                 <div className="mb-4">
                                     <label className="block text-sm font-medium mb-1 text-[#A6A6A6]">
-                                        {locale === 'ru' ? 'Заголовок (Русский)' : 'Sarlavha (Rus)'}
+                                        {'Заголовок (Русский)'}
                                         {isFirst && <span className="text-red-500">*</span>}
                                     </label>
                                     <input
@@ -218,7 +218,7 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
                                         required={isFirst} // Обязательное поле для первого блока
                                     />
                                     <label className="block text-sm font-medium mb-1 text-[#A6A6A6]">
-                                        {locale === 'ru' ? 'Заголовок (Uzbek)' : 'Sarlavha (O\'zbek)'}
+                                        {'Заголовок (Uzbek)'}
                                         {isFirst && <span className="text-red-500">*</span>}
                                     </label>
                                     <input
@@ -234,7 +234,7 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
                                 {/* Поля текста */}
                                 <div className="mb-4">
                                     <label className="block text-sm font-medium mb-1 text-[#A6A6A6]">
-                                        {locale === 'ru' ? 'Текст (Русский)' : 'Matn (Rus)'}
+                                        {'Текст (Русский)'}
                                         {isFirst && <span className="text-red-500">*</span>}
                                     </label>
                                     <textarea
@@ -246,7 +246,7 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
                                         required={isFirst} // Обязательное поле для первого блока
                                     />
                                     <label className="block text-sm font-medium mb-1 text-[#A6A6A6]">
-                                        {locale === 'ru' ? 'Текст (Uzbek)' : 'Matn (O\'zbek)'}
+                                        {'Текст (Uzbek)'}
                                         {isFirst && <span className="text-red-500">*</span>}
                                     </label>
                                     <textarea
@@ -263,8 +263,8 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
                                 <div className="mb-4">
                                     <label className="block text-lg mb-1 text-[#010101] font-bold">
                                         {isFirst
-                                            ? (locale === 'ru' ? 'Изображение (обязательно)' : 'Rasm (majburiy)')
-                                            : (locale === 'ru' ? 'Изображение (не обязательно)' : 'Rasm (majburiy emas)')}
+                                            ? ('Изображение (обязательно)')
+                                            : ('Изображение (не обязательно)')}
                                     </label>
                                     {block.photoPreview && (
                                         <div className="mb-2">
@@ -294,7 +294,7 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
                         onClick={addBlock}
                         className='px-4 py-2 bg-[#00863E] hover:bg-[#27a361] text-white '
                     >
-                        {locale === 'ru' ? 'Добавить блок' : 'Blok qo\'shish'}
+                        {'Добавить блок'}
                     </button>
                 </div>
 
@@ -312,7 +312,7 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
                         className="w-[150px] bg-gray-300 hover:bg-gray-400 py-3"
                         disabled={isSubmitting}
                     >
-                        {locale === 'ru' ? 'Отмена' : 'Bekor qilish'}
+                        {'Отмена'}
                     </button>
                     <button
                         onClick={handleSubmit}
@@ -320,8 +320,8 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
                         disabled={isSubmitting}
                     >
                         {isSubmitting
-                            ? (locale === 'ru' ? 'Сохранение...' : 'Saqlanmoqda...')
-                            : (locale === 'ru' ? 'Создать' : 'Yaratish')}
+                            ? ('Сохранение...')
+                            : ('Создать')}
                     </button>
                 </div>
             </div>

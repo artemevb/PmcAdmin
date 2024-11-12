@@ -44,9 +44,9 @@ export default function NewsComp() {
         try {
             await axios.delete(`https://pmc.result-me.uz/v1/newness/delete/${id}`)
             setNews(news.filter(item => item.id !== id)) // Удаление удаленной новости из состояния
-            alert(locale === 'ru' ? 'Новость удалена успешно' : 'Yangilik muvaffaqiyatli o\'chirildi')
+            alert('Новость удалена успешно')
         } catch (err) {
-            alert(locale === 'ru' ? 'Ошибка при удалении новости' : 'Yangilikni o\'chirishda xato yuz berdi')
+            alert('Ошибка при удалении новости')
         }
     }
 
@@ -73,7 +73,7 @@ export default function NewsComp() {
         <div className='w-full max-w-[1440px] mx-auto flex flex-col gap-8 mb-[90px] mdx:mb-[150px] 2xl:mb-[190px]'>
             <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
                 <h2 className='text-[30px] mdx:text-[40px] mdl:text-[43px] xl:text-[50px] font-semibold'>
-                    {locale === 'ru' ? 'Новости' : 'Yangiliklar'}
+                    Новости
                 </h2>
                 <div className='flex gap-2'>
                     <button
@@ -93,7 +93,7 @@ export default function NewsComp() {
                     onClick={() => setIsModalOpen(true)}
                     className='bg-[#00863E] text-[#ffff] h-[50px] w-[223px] text-[16px] font-extrabold flex items-center justify-center gap-[8px] hover:bg-[#27a361]'
                 >
-                    {locale === 'ru' ? 'Добавить новость' : 'Yangilik qo\'shish'}
+                    {'Добавить новость'}
                     <Image
                         src={plus}
                         width={28}
@@ -128,7 +128,7 @@ export default function NewsComp() {
                             onClick={() => deleteNews(item.id)}
                             className='absolute top-2 right-2 bg-red-500 text-white px-2 py-1 hover:bg-red-700'
                         >
-                            {locale === 'ru' ? 'Удалить новость' : 'Yangilikni o\'chirish'}
+                            {'Удалить новость'}
                         </button>
                     </div>
                 ))}
@@ -137,7 +137,7 @@ export default function NewsComp() {
                     onClick={() => setIsModalOpen(true)}
                     className='h-[344px] w-auto border-[2px] border-dashed border-[#00863E] hover:border-[#2dbd70] flex flex-col-reverse items-center justify-center text-[22px] font-semibold text-[#00863E] hover:text-[#27a361]'
                 >
-                    {locale === 'ru' ? 'Добавить новость' : 'Yangilik qo\'shish'}
+                    {'Добавить новость'}
                     <Image
                         src={plus_green}
                         width={28}
