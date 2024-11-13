@@ -6,7 +6,7 @@ import Image from "next/image"
 import NewCardMain from '../Main/NewCardMain'
 import plus from "@/public/svg/plus-white.svg"
 import plus_green from "@/public/svg/plus-green.svg"
-import CreateDoctorModal from './CreateDoctorModal' // Убедитесь, что путь верный
+import CreateDoctorModal from '../DoctorsModal/CreateDoctorModal' // Убедитесь, что путь верный
 
 // Словари для локализации статических текстов
 const translations = {
@@ -19,12 +19,12 @@ const translations = {
         receptionTime: 'Нет времени приема',
     },
     uz: {
-        addDoctor: 'Shifokor qo\'shish',
-        delete: 'O\'chirish',
-        noName: 'Ism yo\'q',
-        noSpecializations: 'Maxsus yo\'qlik',
-        loading: 'Yuklanmoqda...',
-        receptionTime: 'Qabul vaqti yo\'q',
+        addDoctor: 'Добавить врача',
+        delete: 'Удалить',
+        noName: 'Без имени',
+        noSpecializations: 'Нет специализаций',
+        loading: 'Загрузка...',
+        receptionTime: 'Нет времени приема',
     },
 }
 
@@ -59,7 +59,7 @@ export default function DoctorsComp() {
             }
             setLoading(false)
         } catch (err) {
-            setError(locale === 'ru' ? "Ошибка при загрузке врачей." : "Shifokorlarni yuklashda xato yuz berdi.")
+            setError("Ошибка при загрузке врачей.")
             setLoading(false)
         }
     }
@@ -69,9 +69,9 @@ export default function DoctorsComp() {
         try {
             await axios.delete(`https://pmc.result-me.uz/v1/doctor/delete/${id}`)
             setDoctors(doctors.filter(item => item.id !== id)) // Удаление удаленного врача из состояния
-            alert(locale === 'ru' ? 'Врач успешно удален' : 'Shifokor muvaffaqiyatli o\'chirildi')
+            alert('Врач успешно удален')
         } catch (err) {
-            alert(locale === 'ru' ? 'Ошибка при удалении врача' : 'Shifokorni o\'chirishda xato yuz berdi')
+            alert('Ошибка при удалении врача')
         }
     }
 
@@ -103,19 +103,19 @@ export default function DoctorsComp() {
     return (
         <div className='w-full max-w-[1440px] mx-auto flex flex-col gap-8 mb-[90px] mdx:mb-[150px] 2xl:mb-[190px] px-3'>
             <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
-                <h2 className='text-[30px] mdx:text-[40px] mdl:text-[43px] xl:text-[50px] font-semibold'>
-                    {locale === 'ru' ? 'Врачи' : 'Shifokorlar'}
+                <h2 className='text-[30px] mdx:text-[40px] mdl:text-[43px] xl:text-[50px] font-bold'>
+                    {'Врачи'}
                 </h2>
                 <div className='flex gap-2'>
                     <button
                         onClick={() => switchLocale('ru')}
-                        className={`px-4 py-2 rounded ${locale === 'ru' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
+                        className={`px-4 py-2 ${locale === 'ru' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
                     >
                         Русский
                     </button>
                     <button
                         onClick={() => switchLocale('uz')}
-                        className={`px-4 py-2 rounded ${locale === 'uz' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
+                        className={`px-4 py-2 ${locale === 'uz' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
                     >
                         O'zbek
                     </button>
@@ -136,7 +136,7 @@ export default function DoctorsComp() {
                 </button>
             </div>
 
-            <div className='w-full grid gap-y-[30px] gap-x-[14px] grid-cols-1 mdl:grid-cols-2 xl:grid-cols-4 h-auto mt-[35px] xl:mt-[55px]'>
+            <div className='w-full grid gap-y-[30px] gap-x-[14px] grid-cols-1 mdl:grid-cols-2 xl:grid-cols-4 h-auto'>
                 {doctors.map((doctor) => (
                     <div key={doctor.id} className="relative">
                         <a href={`/doctors/${doctor.slug}`}>
@@ -168,7 +168,7 @@ export default function DoctorsComp() {
 
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className='h-full w-auto border-[2px] border-dashed border-[#00863E] hover:border-[#2dbd70] flex flex-col-reverse items-center justify-center text-[22px] font-semibold text-[#00863E] hover:text-[#27a361]'
+                    className='h-full min-h-[508px] w-auto border-[2px] border-dashed border-[#00863E] hover:border-[#2dbd70] flex flex-col-reverse items-center justify-center text-[22px] font-semibold text-[#00863E] hover:text-[#27a361]'
                 >
                     {t.addDoctor}
                     <Image

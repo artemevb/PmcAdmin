@@ -9,65 +9,72 @@ import Main_info from "../../_components/Doctors/Main";
 import SkillsMain from "../../_components/Doctors/SkillsMain";
 import ServiceMain from "../../_components/Doctors/ServiceMain";
 
-// Словари для локализации статических текстов
+// Translations for static texts
 const translations = {
     ru: {
         switchToRu: 'Русский',
         switchToUz: "O'zbek",
         loading: 'Загрузка...',
-        error: 'Ошибка при загрузке данных.',
+        error: 'Вернитесь в главное меню и снова перейдите на эту страницу',
+        doctorNotFound: 'Доктор не найден.',
     },
     uz: {
         switchToRu: 'Русский',
         switchToUz: "O'zbek",
-        loading: 'Yuklanmoqda...',
-        error: 'Ma\'lumotlarni yuklashda xato yuz berdi.',
+        loading: 'Загрузка...',
+        error: 'Вернитесь в главное меню и снова перейдите на эту страницу',
+        doctorNotFound: 'Doktor topilmadi.',
     },
 };
 
 export default function DoctorPage() {
-    const { slug } = useParams(); // Получение slug из URL
+    const { slug } = useParams(); // Get slug from URL
     const [locale, setLocale] = useState('ru');
     const [doctor, setDoctor] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const t = translations[locale];
 
-    // Функция для получения данных доктора
+    // Function to fetch doctor data
     const fetchDoctor = async () => {
         setLoading(true);
         setError(null);
         try {
             const response = await axios.get(`https://pmc.result-me.uz/v1/doctor/get/${slug}`, {
                 headers: {
-                    'Accept-Language': locale, // Установка локали
+                    'Accept-Language': locale, // Set locale
                 },
             });
 
+            console.log('Fetched doctor data:', response.data); // Log the entire response
+
             if (response.data && response.data.data) {
                 setDoctor(response.data.data);
+                console.log('Doctor data set:', response.data.data); // Log the doctor data being set
             } else {
                 setError(t.error);
+                console.log('Error: ', t.error); // Log the error message
             }
         } catch (err) {
-            console.error(err);
+            console.error('Error fetching doctor data:', err);
             setError(t.error);
         } finally {
             setLoading(false);
         }
     };
 
-    // Инициализация локали из localStorage при монтировании
+    // Initialize locale from localStorage on mount
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const storedLocale = localStorage.getItem('locale');
             if (storedLocale && (storedLocale === 'ru' || storedLocale === 'uz')) {
                 setLocale(storedLocale);
+                console.log('Locale set from localStorage:', storedLocale); // Log the locale set
             }
         }
     }, []);
 
-    // Получение данных при изменении slug или locale
+    // Fetch doctor data when slug or locale changes
     useEffect(() => {
         if (slug) {
             fetchDoctor();
@@ -75,40 +82,34 @@ export default function DoctorPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [slug, locale]);
 
-    // Функция для смены локали
+    // Function to switch locale
     const switchLocale = (newLocale) => {
         if (newLocale === locale) return;
         setLocale(newLocale);
         if (typeof window !== 'undefined') {
             localStorage.setItem('locale', newLocale);
+            console.log('Locale switched to:', newLocale); // Log locale switch
         }
     };
 
-    // Функции для редактирования и удаления записей
+    // Functions for editing and deleting entries
     const handleEdit = (type, id) => {
-        // type: 'education' или 'specialization' или 'service'
-        // id: идентификатор записи (может быть undefined для добавления новой записи)
-        // Реализуйте логику открытия модального окна редактирования
-        alert(`Редактировать ${type} с id: ${id || 'новой записи'}`);
+        // Implemented in ServiceMain
     };
 
     const handleDelete = (type, id) => {
-        // type: 'education' или 'specialization' или 'service'
-        // id: идентификатор записи
-        // Реализуйте логику удаления записи
-        if (confirm('Вы уверены, что хотите удалить эту запись?')) {
-            // Здесь должна быть логика удаления через API
-            alert(`Удалить ${type} с id: ${id}`);
-        }
+        // Implemented in ServiceMain
     };
 
     if (loading) return <div className='text-center'>{t.loading}</div>;
     if (error) return <div className='text-center text-red-500'>{t.error}</div>;
-    if (!doctor) return <div className='text-center'>Доктор не найден.</div>;
+    if (!doctor) return <div className='text-center'>{t.doctorNotFound}</div>;
+
+    console.log('Rendering DoctorPage with doctor data:', doctor); // Log before rendering
 
     return (
         <div className="w-full bg-white flex flex-col mt-[30px]">
-            {/* Кнопки Смены Языка */}
+            {/* Language Switch Buttons */}
             <div className="flex justify-end gap-2 mb-4 px-4">
                 <button
                     onClick={() => switchLocale('ru')}
@@ -124,33 +125,30 @@ export default function DoctorPage() {
                 </button>
             </div>
 
-            {/* Передача данных в дочерние компоненты */}
+            {/* Pass data to child components */}
             <Main_info
-                specializations={doctor.specializationList || []} // Устанавливаем пустой массив по умолчанию
-                fullName={doctor.fullName}
-                description={doctor.description}
-                experience={doctor.experience}
-                receptionTime={doctor.receptionTime}
-                photo={doctor.photo?.url}
+                doctor={doctor}
                 locale={locale}
+                fetchDoctor={fetchDoctor} // To refresh data after update
             />
 
             <SkillsMain
-                doctorId={doctor.id} // Передача doctorId
+                doctorId={doctor.id}
                 educationList={doctor.educationList}
                 specializationList={doctor.specializationList}
                 locale={locale}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
-                refreshDoctor={fetchDoctor} // Передача функции для обновления данных
+                refreshDoctor={fetchDoctor} // Function to refresh data
             />
+
             <ServiceMain
                 services={doctor.serviceOfDoctorList || []} // Ensure it's an array
                 locale={locale}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
-                doctorId={doctor.id} // Pass the doctorId
-                refreshDoctor={fetchDoctor} // Ensure this is passed for refreshing data
+                doctorId={doctor.id}
+                refreshDoctor={fetchDoctor} // Function to refresh data
             />
         </div>
     );

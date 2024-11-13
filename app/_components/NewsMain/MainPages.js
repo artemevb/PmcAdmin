@@ -206,13 +206,13 @@ export default function MainPages() {
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => switchLocale('ru')}
-                                    className={`px-4 py-2 rounded ${locale === 'ru' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
+                                    className={`px-4 py-2 ${locale === 'ru' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
                                 >
                                     Русский
                                 </button>
                                 <button
                                     onClick={() => switchLocale('uz')}
-                                    className={`px-4 py-2 rounded ${locale === 'uz' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
+                                    className={`px-4 py-2 ${locale === 'uz' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
                                 >
                                     O'zbek
                                 </button>
@@ -221,17 +221,17 @@ export default function MainPages() {
                     </div>
 
                     {news.optionList?.[0]?.photo?.url && (
-                        <div className="w-full max-xl:my-[25px] xl:mt-7 xl:mb-[40px] flex flex-row justify-center">
+                        <div className="w-full max-w-[1035px] h-[500px] max-xl:my-[25px] xl:mt-7 xl:mb-[40px] flex justify-center relative">
                             <Image
                                 src={news.optionList[0].photo.url || '/images/News/image-full.png'}
-                                width={1000}
-                                height={600}
+                                layout="fill" // Используем fill для полного покрытия
                                 quality={100}
                                 alt="Main News Image"
-                                className="w-full h-auto object-cover"
+                                className="object-cover" // Обеспечиваем полное покрытие с сохранением пропорций
                             />
                         </div>
                     )}
+
 
                     {news.optionList?.map((item, index) => (
                         <div className="mt-[35px] xl:mt-[70px] w-full h-full" key={item.id}>
@@ -264,17 +264,17 @@ export default function MainPages() {
                                 </p>
                             )}
                             {index !== 0 && item.photo?.url && (
-                                <div className="mt-[30px] mb-[10px] flex flex-row justify-center w-full h-full">
+                                <div className="mt-[30px] mb-[10px] flex justify-center relative w-full max-w-[1035px] h-[500px]">
                                     <Image
                                         src={item.photo.url}
-                                        width={1035}
-                                        height={500}
+                                        layout="fill" // Используем fill для полного покрытия контейнера
                                         quality={100}
                                         alt="Block Image"
-                                        className="w-full h-full max-w-[832px] max-h-[500px] 5xl:max-w-[1035px] object-cover "
+                                        className="object-cover" // Обеспечиваем полное покрытие с сохранением пропорций
                                     />
                                 </div>
                             )}
+
                             <div className="flex gap-4 mt-4">
                                 <button
                                     onClick={() => handleEditClick(item, index === 0)}

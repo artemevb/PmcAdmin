@@ -1,9 +1,11 @@
-"use client"
+"use client";
 import { useState } from "react";
 import List_Doctors from "../Doctors/List";
 import News from "../News/NewsList";
-import news_icon from '@/public/svg/fluent_news-16-regular.svg'
-import jam_medical from '@/public/svg/jam_medical.svg'
+import news_icon_black from '@/public/svg/fluent_news-16-regular.svg';
+import news_icon_green from '@/public/svg/fluent_green.svg';
+import jam_medical_black from '@/public/svg/jam_medical_black.svg';
+import jam_medical_green from '@/public/svg/jam_medical.svg';
 import Image from "next/image";
 
 export default function Main() {
@@ -14,7 +16,7 @@ export default function Main() {
     <div className="flex w-full h-full ">
       {/* Sidebar */}
       <div className="w-[350px] bg-white">
-        <ul >
+        <ul>
           <li>
             <button
               onClick={() => setActiveComponent("doctors")}
@@ -22,11 +24,11 @@ export default function Main() {
                 }`}
             >
               <Image
-                src={news_icon}
+                src={activeComponent === "doctors" ? news_icon_green : news_icon_black}
                 width={28}
                 height={28}
                 quality={100}
-                alt={`news_icon Image `}
+                alt={`news_icon Image`}
                 className="w-full h-auto object-cover max-w-[28px]"
               />
               Врачи
@@ -39,11 +41,11 @@ export default function Main() {
                 }`}
             >
               <Image
-                src={jam_medical}
+                src={activeComponent === "news" ? jam_medical_green : jam_medical_black}
                 width={28}
                 height={28}
                 quality={100}
-                alt={`jam_medical Image `}
+                alt={`jam_medical Image`}
                 className="w-full h-auto object-cover max-w-[28px]"
               />
               Новости

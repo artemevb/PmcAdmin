@@ -67,7 +67,7 @@ export default function ModalAddSpecialization({ isOpen, onClose, onSave, locale
                         type="text"
                         value={specializationName.uz}
                         onChange={(e) => setSpecializationName({ ...specializationName, uz: e.target.value })}
-                        className="border border-gray-300 p-2 w-full rounded mt-1 text-black"
+                        className="border border-gray-300 p-2 w-full rounded-[10px] mt-1 text-black"
                         placeholder={t.specializationNameUz}
                     />
                 </label>
@@ -77,19 +77,19 @@ export default function ModalAddSpecialization({ isOpen, onClose, onSave, locale
                         type="text"
                         value={specializationName.ru}
                         onChange={(e) => setSpecializationName({ ...specializationName, ru: e.target.value })}
-                        className="border border-gray-300 p-2 w-full rounded mt-1 text-black"
+                        className="border border-gray-300 p-2 w-full rounded-[10px] mt-1 text-black"
                         placeholder={t.specializationNameRu}
                     />
                 </label>
                 <div className="flex justify-end gap-4 bg-[#F9F9F9] p-[23px] mt-[40px]">
                     <button
-                        className="bg-gray-500 text-white px-4 py-2 hover:bg-gray-600 text-[16px] h-[50px]"
+                        className="bg-gray-500 text-white px-[60px] hover:bg-gray-600 text-[16px] h-[50px] w-auto"
                         onClick={onClose}
                     >
                         {t.cancel}
                     </button>
                     <button
-                        className="bg-[#00863E] text-white px-4 py-2 hover:bg-[#398f61] font-extrabold w-[223px] text-[16px] h-[50px]"
+                        className="bg-[#00863E] text-white px-[60px] hover:bg-[#398f61] font-extrabold w-auto text-[16px] h-[50px]"
                         onClick={handleSave}
                     >
                         {t.save}

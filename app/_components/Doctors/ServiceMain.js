@@ -3,11 +3,13 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Image from "next/image";
-import Modal from '../DoctorsModal/ServiceAddModal'; // Импорт компонента Modal
+import Modal from '../DoctorsModal/ServiceAddModal';
+import UpdateModal from '../DoctorsModal/UpdateServiceModal';
 import plus_green from "@/public/svg/plus-green.svg";
 import pen from "@/public/svg/pen.svg";
 import close from "@/public/svg/close-modal.svg";
 
+// Translations for static texts
 const translations = {
     ru: {
         addService: 'Добавить услугу',
@@ -29,11 +31,19 @@ const translations = {
         loading: 'Загрузка...',
         errorCreate: 'Ошибка при создании услуги.',
         successCreate: 'Услуга успешно создана.',
+        errorDelete: 'Ошибка при удалении услуги.',
+        successDelete: 'Услуга успешно удалена.',
         specificError: 'Ошибка: ',
+        updateService: 'Обновить услугу',
+        successUpdate: 'Услуга успешно обновлена.',
+        errorUpdate: 'Ошибка при обновлении услуги.',
+        updating: 'Обновление...',
+        update: 'Обновить',
+        close: 'Закрыть',
     },
     uz: {
-        addService: 'Добавить услугу',
-        edit: 'Редakt qilish',
+        addService: 'Xizmat qo\'shish',
+        edit: 'Tahrirlash',
         delete: 'O\'chirish',
         noServices: 'Hech qanday xizmat mavjud emas',
         active: 'Faol',
@@ -51,14 +61,32 @@ const translations = {
         loading: 'Yuklanmoqda...',
         errorCreate: 'Xizmatni yaratishda xato yuz berdi.',
         successCreate: 'Xizmat muvaffaqiyatli yaratildi.',
+        errorDelete: 'Xizmatni o\'chirishda xato yuz berdi.',
+        successDelete: 'Xizmat muvaffaqiyatli o\'chirildi.',
         specificError: 'Xato: ',
+        updateService: 'Xizmatni yangilash',
+        successUpdate: 'Xizmat muvaffaqiyatli yangilandi.',
+        errorUpdate: 'Xizmatni yangilashda xato yuz berdi.',
+        updating: 'Yangilanmoqda...',
+        update: 'Yangilash',
+        close: 'Yopish',
     },
 };
 
-export default function ServiceMain({ services, locale, onEdit, onDelete, doctorId, refreshDoctor }) {
+// Helper function to get localized field
+const getLocalizedField = (field, locale) => {
+    if (typeof field === 'object' && field !== null) {
+        return field[locale] || field['ru'] || '';
+    }
+    return field;
+};
+
+export default function ServiceMain({ locale, doctorId, refreshDoctor }) {
     const t = translations[locale];
     const [itemsLimit, setItemsLimit] = useState(12);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+    const [selectedService, setSelectedService] = useState(null);
     const [formData, setFormData] = useState({
         name: { ru: '', uz: '' },
         price: { ru: '', uz: '' },
@@ -66,27 +94,67 @@ export default function ServiceMain({ services, locale, onEdit, onDelete, doctor
     const [loading, setLoading] = useState(false);
     const [createError, setCreateError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [deleteError, setDeleteError] = useState('');
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
+    const [servicesData, setServicesData] = useState([]);
+
+    // Fetch services data from API
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const response = await axios.get(`https://pmc.result-me.uz/v1/doctor/service/get-all/${doctorId}`, {
+                    headers: {
+                        'Authorization': token ? `Bearer ${token}` : '',
+                        'Accept-Language': locale,
+                    }
+                });
+
+                console.log('Fetched services data:', response.data);
+                if (response.data && response.data.data) {
+                    setServicesData(response.data.data);
+                } else {
+                    console.error('Invalid response data:', response.data);
+                }
+            } catch (error) {
+                console.error('Error fetching services:', error);
+            }
+        };
+
+        fetchServices();
+    }, [doctorId, token, locale]);
+
+    // Log the received services data
+    useEffect(() => {
+        console.log('ServiceMain fetched servicesData:', servicesData);
+    }, [servicesData]);
+
+    // Adjust itemsLimit based on window size
     useEffect(() => {
         const handleResize = () => {
-            setItemsLimit(window.innerWidth >= 460 ? 12 : 4);
+            const newLimit = window.innerWidth >= 460 ? 12 : 4;
+            setItemsLimit(newLimit);
+            console.log('Items limit set to:', newLimit);
         };
         handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // Handle form input changes for adding services
     const handleChange = (e, field, lang) => {
         const value = e.target.value;
         setFormData(prev => ({ ...prev, [field]: { ...prev[field], [lang]: value } }));
     };
 
+    // Handle submission for adding a new service
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setCreateError('');
         setSuccessMessage('');
+
+        console.log('Submitting new service with formData:', formData);
 
         try {
             const response = await axios.post(`https://pmc.result-me.uz/v1/doctor/service/create/${doctorId}`, {
@@ -100,22 +168,97 @@ export default function ServiceMain({ services, locale, onEdit, onDelete, doctor
                 },
             });
 
+            console.log('Add service response:', response.data);
+
             if (response.data && response.data.success) {
                 setSuccessMessage(t.successCreate);
                 setFormData({ name: { ru: '', uz: '' }, price: { ru: '', uz: '' } });
-                refreshDoctor(); // Обновляем данные доктора после успешного создания услуги
+                // Fetch services data again
+                const updatedServices = await axios.get(`https://pmc.result-me.uz/v1/doctor/service/get-all/${doctorId}`, {
+                    headers: {
+                        'Authorization': token ? `Bearer ${token}` : '',
+                        'Accept-Language': locale,
+                    }
+                });
+                setServicesData(updatedServices.data.data);
+
                 setTimeout(() => {
                     setIsModalOpen(false);
                     setSuccessMessage('');
                 }, 2000);
             } else {
                 setCreateError(response.data.message || t.errorCreate);
+                console.log('Create service error:', response.data.message || t.errorCreate);
             }
         } catch (error) {
             setCreateError(error.response?.data?.message ? `${t.specificError} ${error.response.data.message}` : t.errorCreate);
+            console.error('Error creating service:', error);
         } finally {
             setLoading(false);
-            refreshDoctor(); // Делаем рефреш даже при ошибке для обновления данных
+        }
+    };
+
+    // Handle deletion of a service
+    const handleDelete = async (serviceId) => {
+        setDeleteError('');
+        console.log('Attempting to delete service with ID:', serviceId);
+        try {
+            const response = await axios.delete(`https://pmc.result-me.uz/v1/doctor/service/delete/${serviceId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            console.log('Delete service response:', response);
+
+            if (response.status === 200) {
+                alert(t.successDelete);
+                // Fetch services data again
+                const updatedServices = await axios.get(`https://pmc.result-me.uz/v1/doctor/service/get-all/${doctorId}`, {
+                    headers: {
+                        'Authorization': token ? `Bearer ${token}` : '',
+                        'Accept-Language': locale,
+                    }
+                });
+                setServicesData(updatedServices.data.data);
+            } else {
+                setDeleteError(t.errorDelete);
+                console.log('Delete service failed with status:', response.status);
+            }
+        } catch (error) {
+            setDeleteError(error.response?.data?.message ? `${t.specificError} ${error.response.data.message}` : t.errorDelete);
+            console.error('Error deleting service:', error);
+        }
+    };
+
+    // Handle editing of a service
+    const handleEdit = (type, service) => {
+        if (type === 'service') {
+            console.log('Editing service:', service);
+            setSelectedService(service);
+            setIsUpdateModalOpen(true);
+        }
+    };
+
+    // Log when selectedService changes
+    useEffect(() => {
+        if (selectedService) {
+            console.log('Selected service for update:', selectedService);
+        }
+    }, [selectedService]);
+
+    // Function to refresh services data after update
+    const refreshServicesData = async () => {
+        try {
+            const updatedServices = await axios.get(`https://pmc.result-me.uz/v1/doctor/service/get-all/${doctorId}`, {
+                headers: {
+                    'Authorization': token ? `Bearer ${token}` : '',
+                    'Accept-Language': locale,
+                }
+            });
+            setServicesData(updatedServices.data.data);
+        } catch (error) {
+            console.error('Error refreshing services data:', error);
         }
     };
 
@@ -125,12 +268,12 @@ export default function ServiceMain({ services, locale, onEdit, onDelete, doctor
                 {t.servicesTitle}
             </h2>
             <div className="grid mdx:gap-x-[16px] gap-y-[12px] mdx:gap-y-[20px] mdx:grid-cols-2 mt-[25px] mdx:mt-[30px] 2xl:grid-cols-4">
-                {services && services.length > 0 ? (
-                    services.slice(0, itemsLimit).map((service) => (
+                {servicesData && servicesData.length > 0 ? (
+                    servicesData.slice(0, itemsLimit).map((service) => (
                         <div key={service.id} className="relative border border-[#EEE] p-[20px] flex flex-col justify-between min-h-[150px] mdx:min-h-[180px] 2xl:min-h-[200px]">
                             <button
                                 className="absolute top-[10px] right-[10px]"
-                                onClick={() => onDelete('service', service.id)}
+                                onClick={() => handleDelete(service.id)}
                             >
                                 <Image
                                     src={close}
@@ -142,13 +285,18 @@ export default function ServiceMain({ services, locale, onEdit, onDelete, doctor
                                 />
                             </button>
 
-                            <h5 className="text-[18px] mdx:text-[18px] xl:text-[22px] font-semibold mb-auto">{service.name}</h5>
+                            {/* Use helper to get localized name and price */}
+                            <h5 className="text-[18px] mdx:text-[18px] xl:text-[22px] font-semibold mb-auto">
+                                {getLocalizedField(service.name, locale)}
+                            </h5>
 
-                            <p className="text-[#00863E] text-[18px] mdx:text-[18px] xl:text-[22px] font-bold mt-auto">{service.price}</p>
+                            <p className="text-[#00863E] text-[18px] mdx:text-[18px] xl:text-[22px] font-bold mt-auto">
+                                {getLocalizedField(service.price, locale)}
+                            </p>
 
                             <button
                                 className="absolute bottom-[10px] right-[10px]"
-                                onClick={() => onEdit('service', service.id)}
+                                onClick={() => handleEdit('service', service)}
                             >
                                 <Image
                                     src={pen}
@@ -167,7 +315,10 @@ export default function ServiceMain({ services, locale, onEdit, onDelete, doctor
 
                 <button
                     className='h-[200px] w-auto border-[2px] border-dashed border-[#00863E] hover:border-[#2dbd70] flex flex-col-reverse items-center justify-center text-[22px] font-semibold text-[#00863E] hover:text-[#27a361]'
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => {
+                        console.log('Opening Add Service Modal');
+                        setIsModalOpen(true);
+                    }}
                 >
                     {t.addService}
                     <Image
@@ -181,9 +332,15 @@ export default function ServiceMain({ services, locale, onEdit, onDelete, doctor
                 </button>
             </div>
 
+            {deleteError && <p className="text-red-500 text-sm mt-4">{deleteError}</p>}
+
+            {/* Add Service Modal */}
             <Modal
                 isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                onClose={() => {
+                    console.log('Closing Add Service Modal');
+                    setIsModalOpen(false);
+                }}
                 title={t.addService}
                 formData={formData}
                 handleChange={handleChange}
@@ -193,6 +350,23 @@ export default function ServiceMain({ services, locale, onEdit, onDelete, doctor
                 loading={loading}
                 t={t}
             />
+
+            {/* Update Service Modal */}
+            <UpdateModal
+                isOpen={isUpdateModalOpen}
+                onClose={() => {
+                    console.log('Closing Update Service Modal');
+                    setIsUpdateModalOpen(false);
+                    setSelectedService(null);
+                }}
+                service={selectedService}
+                onUpdate={() => {
+                    console.log('Updating services data after service update');
+                    refreshServicesData();
+                }}
+                locale={locale}
+                t={t}
+            />
         </div>
-    );
+    )
 }

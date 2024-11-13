@@ -72,19 +72,19 @@ export default function NewsComp() {
     return (
         <div className='w-full max-w-[1440px] mx-auto flex flex-col gap-8 mb-[90px] mdx:mb-[150px] 2xl:mb-[190px]'>
             <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
-                <h2 className='text-[30px] mdx:text-[40px] mdl:text-[43px] xl:text-[50px] font-semibold'>
+                <h2 className='text-[30px] mdx:text-[40px] mdl:text-[43px] xl:text-[50px] font-bold'>
                     Новости
                 </h2>
                 <div className='flex gap-2'>
                     <button
                         onClick={() => switchLocale('ru')}
-                        className={`px-4 py-2 rounded ${locale === 'ru' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
+                        className={`px-4 py-2 ${locale === 'ru' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
                     >
                         Русский
                     </button>
                     <button
                         onClick={() => switchLocale('uz')}
-                        className={`px-4 py-2 rounded ${locale === 'uz' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
+                        className={`px-4 py-2 ${locale === 'uz' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
                     >
                         O'zbek
                     </button>
