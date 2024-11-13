@@ -10,8 +10,8 @@ export default function NewCardMain({ title, imageSrc, specializationList }) {
         <div className="w-full bg-white h-full flex flex-col gap-2 justify-between">
             <Image
                 src={imageSrc}
-                width={500}
-                height={500}
+                width={1000}
+                height={1000}
                 quality={100}
                 alt={`Фото врача ${title}`}
                 className="w-full h-auto object-cover"

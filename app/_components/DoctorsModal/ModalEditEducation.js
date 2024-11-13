@@ -56,22 +56,22 @@ const ModalEditEducation = ({ isOpen, onClose, onSave, education, locale }) => {
                 finishYear: education.finishYear,
                 institution: institutionIsObject
                     ? {
-                          uz: education.institution.uz || '',
-                          ru: education.institution.ru || '',
-                      }
+                        uz: education.institution.uz || '',
+                        ru: education.institution.ru || '',
+                    }
                     : {
-                          uz: '',
-                          ru: '',
-                      },
+                        uz: '',
+                        ru: '',
+                    },
                 qualification: qualificationIsObject
                     ? {
-                          uz: education.qualification.uz || '',
-                          ru: education.qualification.ru || '',
-                      }
+                        uz: education.qualification.uz || '',
+                        ru: education.qualification.ru || '',
+                    }
                     : {
-                          uz: '',
-                          ru: '',
-                      },
+                        uz: '',
+                        ru: '',
+                    },
             });
         }
     }, [isOpen, education]);
@@ -114,7 +114,7 @@ const ModalEditEducation = ({ isOpen, onClose, onSave, education, locale }) => {
                     <div className="flex flex-col">
                         <label>{t.startYear}</label>
                         <input
-                            type="number"
+                            type="text"
                             name="startYear"
                             value={formData.startYear}
                             onChange={handleChange}
@@ -125,7 +125,7 @@ const ModalEditEducation = ({ isOpen, onClose, onSave, education, locale }) => {
                     <div className="flex flex-col">
                         <label>{t.finishYear}</label>
                         <input
-                            type="number"
+                            type="text"
                             name="finishYear"
                             value={formData.finishYear}
                             onChange={handleChange}

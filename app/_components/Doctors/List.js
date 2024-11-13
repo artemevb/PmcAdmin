@@ -136,7 +136,7 @@ export default function DoctorsComp() {
                 </button>
             </div>
 
-            <div className='w-full grid gap-y-[30px] gap-x-[14px] grid-cols-1 mdl:grid-cols-2 xl:grid-cols-4 h-auto'>
+            <div className='w-full grid gap-y-[30px] gap-x-[14px] grid-cols-1 mdl:grid-cols-2 xl:grid-cols-4 h-auto '>
                 {doctors.map((doctor) => (
                     <div key={doctor.id} className="relative">
                         <a href={`/doctors/${doctor.slug}`}>

@@ -28,6 +28,7 @@ export default function Main() {
                 width={28}
                 height={28}
                 quality={100}
+                priority
                 alt={`news_icon Image`}
                 className="w-full h-auto object-cover max-w-[28px]"
               />
@@ -45,6 +46,7 @@ export default function Main() {
                 width={28}
                 height={28}
                 quality={100}
+                priority
                 alt={`jam_medical Image`}
                 className="w-full h-auto object-cover max-w-[28px]"
               />

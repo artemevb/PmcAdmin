@@ -169,19 +169,9 @@ export default function SkillsMain({ doctorId, locale }) {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept-Language': '-', // Устанавливаем Accept-Language в '-'
+                    'Accept-Language': '-',
                 },
-                body: JSON.stringify({
-                    ...educationData,
-                    institution: {
-                        uz: educationData.institutionUz,
-                        ru: educationData.institutionRu,
-                    },
-                    qualification: {
-                        uz: educationData.qualificationUz,
-                        ru: educationData.qualificationRu,
-                    },
-                }),
+                body: JSON.stringify(educationData),
             });
 
             if (response.ok) {
@@ -197,6 +187,7 @@ export default function SkillsMain({ doctorId, locale }) {
             alert(t.errorAddingEducation);
         }
     };
+
 
     // Функция для обновления образования
     const handleUpdateEducation = async (updatedEducation) => {
@@ -224,7 +215,74 @@ export default function SkillsMain({ doctorId, locale }) {
         }
     };
 
-    // Функции удаления и модальных окон остаются без изменений
+    // Inside SkillsMain.js
+
+    // Function to open the confirmation modal
+    const openConfirmDelete = (type, id) => {
+        setDeleteType(type);
+        setDeleteId(id);
+        setIsConfirmDeleteOpen(true);
+    };
+
+    // Function to get the confirmation message based on the type
+    const getConfirmDeleteMessage = () => {
+        if (deleteType === 'education') {
+            return t.confirmDeleteMessageEducation;
+        } else if (deleteType === 'specialization') {
+            return t.confirmDeleteMessageSpecialization;
+        } else {
+            return '';
+        }
+    };
+
+    // Function to handle the delete action after confirmation
+    const handleConfirmDelete = async () => {
+        if (!deleteType || !deleteId) {
+            return;
+        }
+        try {
+            let url = '';
+            if (deleteType === 'education') {
+                url = `https://pmc.result-me.uz/v1/doctor/education/delete/${deleteId}`;
+            } else if (deleteType === 'specialization') {
+                url = `https://pmc.result-me.uz/v1/doctor/specialization/delete/${deleteId}`;
+            } else {
+                return;
+            }
+
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Accept-Language': '-',
+                },
+            });
+
+            if (response.ok) {
+                if (deleteType === 'education') {
+                    alert(t.educationDeleted);
+                } else if (deleteType === 'specialization') {
+                    alert(t.specializationDeleted);
+                }
+                setIsConfirmDeleteOpen(false);
+                refreshDoctor();
+            } else {
+                const errorData = await response.json();
+                if (deleteType === 'education') {
+                    alert(`${t.errorDeletingEducation}: ${errorData.message || 'Неизвестная ошибка'}`);
+                } else if (deleteType === 'specialization') {
+                    alert(`${t.errorDeletingSpecialization}: ${errorData.message || 'Неизвестная ошибка'}`);
+                }
+            }
+        } catch (error) {
+            console.error('Ошибка запроса:', error);
+            if (deleteType === 'education') {
+                alert(t.errorDeletingEducation);
+            } else if (deleteType === 'specialization') {
+                alert(t.errorDeletingSpecialization);
+            }
+        }
+    };
+
 
     // Функции для открытия модальных окон редактирования
     const handleEditSpecialization = (spec) => {
@@ -242,17 +300,15 @@ export default function SkillsMain({ doctorId, locale }) {
             {/* Навигационные вкладки */}
             <div className="flex gap-[50px] mb-8">
                 <button
-                    className={`transition-opacity text-[20px] mdx:text-[25px] xl:text-[45px] font-semibold ${
-                        activeTab === 'education' ? 'text-black' : 'opacity-25'
-                    }`}
+                    className={`transition-opacity text-[20px] mdx:text-[25px] xl:text-[45px] font-semibold ${activeTab === 'education' ? 'text-black' : 'opacity-25'
+                        }`}
                     onClick={() => setActiveTab('education')}
                 >
                     {t.education}
                 </button>
                 <button
-                    className={`transition-opacity text-[20px] mdx:text-[25px] xl:text-[45px] font-semibold ${
-                        activeTab === 'specialization' ? 'text-black' : 'opacity-25'
-                    }`}
+                    className={`transition-opacity text-[20px] mdx:text-[25px] xl:text-[45px] font-semibold ${activeTab === 'specialization' ? 'text-black' : 'opacity-25'
+                        }`}
                     onClick={() => setActiveTab('specialization')}
                 >
                     {t.specialization}
@@ -390,12 +446,12 @@ export default function SkillsMain({ doctorId, locale }) {
                 locale={locale}
             />
 
-            {/* <ConfirmDeleteModal
+            <ConfirmDeleteModal
                 isOpen={isConfirmDeleteOpen}
                 onClose={() => setIsConfirmDeleteOpen(false)}
                 onConfirm={handleConfirmDelete}
                 message={getConfirmDeleteMessage()}
-            /> */}
+            />
 
             <ModalEditSpecialization
                 isOpen={isEditSpecializationModalOpen}
