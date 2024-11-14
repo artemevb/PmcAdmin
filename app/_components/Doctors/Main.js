@@ -1,5 +1,3 @@
-// app/_components/Doctors/Main.jsx
-
 'use client';
 
 import { useState } from 'react';
@@ -25,17 +23,19 @@ export default function Main_info({ doctor, locale, fetchDoctor }) {
     return (
         <div className="w-full bg-white h-full flex flex-col justify-between px-[16px] max-w-[1440px] mx-auto">
             <div className="md:flex md:gap-4 xl:gap-10 h-full">
-                <div className="w-full h-full max-h-[666px] max-w-[588px]">
+                <div className="w-full h-full max-h-[666px] max-w-[588px] flex justify-center items-center">
                     <Image
                         src={doctor.photo?.url || '/images/default-image.png'}
-                        width={1500}
-                        height={1500}
+                        width={1588}
+                        height={1666}
                         quality={100}
                         alt={`Фото врача ${doctor.fullName || 'Без имени'}`}
-                        className="w-full h-auto object-cover rounded-[10px] max-h-[666px] max-w-[588px]"
+                        className="object-contain rounded-[10px]"
+                        style={{ maxWidth: '100%', maxHeight: '100%' }}
                     />
                 </div>
                 <div className="w-full xl:max-w-xl">
+                    {/* Остальная часть вашего компонента */}
                     <div className="flex flex-row gap-2 mt-5 flex-wrap">
                         {doctor.specializationList && doctor.specializationList.length > 0 ? (
                             doctor.specializationList.map((spec, index) => (

@@ -57,7 +57,7 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
                 if (!block.title_ru.trim() || !block.title_uz.trim()) {
                     setError(locale === 'ru'
                         ? `Заголовок обязателен в блоке "${i + 1 === 0 ? 'Вступление' : `Блок ${i + 1}`}".`
-                        : `Sarlavha majburiy bo'lishi kerak blokda "${i + 1 === 0 ? 'Tanishuv' : `Blok ${i + 1}`}".`);
+                        : `Заголовок обязателен в блоке "${i + 1 === 0 ? 'Вступление' : `Блок ${i + 1}`}".`);
                     setIsSubmitting(false);
                     return;
                 }
@@ -65,7 +65,7 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
                 if (!block.title_ru.trim() && !block.title_uz.trim()) {
                     setError(locale === 'ru'
                         ? `Заголовок обязателен в блоке ${i + 1}.`
-                        : `Sarlavha majburiy bo'lishi kerak blokda ${i + 1}.`);
+                        : `Заголовок обязателен в блоке ${i + 1}.`);
                     setIsSubmitting(false);
                     return;
                 }
@@ -76,7 +76,7 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
                 if (!block.body_ru.trim() || !block.body_uz.trim()) {
                     setError(locale === 'ru'
                         ? `Текст обязателен в блоке "${i + 1 === 0 ? 'Вступление' : `Блок ${i + 1}`}".`
-                        : `Matn majburiy bo'lishi kerak blokda "${i + 1 === 0 ? 'Tanishuv' : `Blok ${i + 1}`}".`);
+                        : `Текст обязателен в блоке "${i + 1 === 0 ? 'Вступление' : `Блок ${i + 1}`}".`);
                     setIsSubmitting(false);
                     return;
                 }
@@ -84,7 +84,7 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
                 if (!block.body_ru.trim() && !block.body_uz.trim()) {
                     setError(locale === 'ru'
                         ? `Текст обязателен в блоке ${i + 1}.`
-                        : `Matn majburiy bo'lishi kerak blokda ${i + 1}.`);
+                        : `Текст обязателен в блоке ${i + 1}.`);
                     setIsSubmitting(false);
                     return;
                 }
@@ -94,7 +94,7 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
             if (isFirst && !block.photo && !block.photoPreview) {
                 setError(locale === 'ru'
                     ? `Изображение обязательно для первого блока "${i + 1 === 0 ? 'Вступление' : `Блок ${i + 1}`}".`
-                    : `Rasm majburiy bo'lishi kerak blokda "${i + 1 === 0 ? 'Tanishuv' : `Blok ${i + 1}`}".`);
+                    : `Изображение обязательно для первого блока "${i + 1 === 0 ? 'TВступление' : `Блок ${i + 1}`}".`);
                 setIsSubmitting(false);
                 return;
             }

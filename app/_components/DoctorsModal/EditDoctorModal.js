@@ -1,5 +1,3 @@
-// app/_components/DoctorsModal/EditDoctorModal.jsx
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -19,8 +17,8 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
         experience: { ru: '', uz: '' },
         receptionTime: { ru: '', uz: '' },
         specializationList: [],
-        photo: null, // Can be a File, an object, or null
-        photoId: null, // Store existing photo ID
+        photo: null,
+        photoId: null,
     });
     const [photoPreview, setPhotoPreview] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -38,12 +36,11 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
                 `https://pmc.result-me.uz/v1/doctor/get-by-id/${doctorId}`,
                 {
                     headers: {
-                        'Accept-Language': '-', // Or set to undefined
+                        'Accept-Language': '-',
                     },
                 }
             );
             const doctorData = response.data.data;
-            console.log('Получены данные врача:', doctorData);
             setFormData({
                 id: doctorData.id || '',
                 active: doctorData.active || true,
@@ -57,14 +54,11 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
                         name: spec.name || { ru: '', uz: '' },
                     })) || [],
                 photo: doctorData.photo || null,
-                photoId: doctorData.photo?.id || null, // Store existing photo ID
+                photoId: doctorData.photo?.id || null,
             });
             setPhotoPreview(doctorData.photo?.url || null);
         } catch (error) {
-            console.error(
-                'Ошибка при получении данных врача:',
-                error.response?.data || error.message
-            );
+            console.error('Ошибка при получении данных врача:', error.response?.data || error.message);
             setError('Ошибка при получении данных врача.');
         }
     };
@@ -81,7 +75,6 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
             }));
             setPhotoPreview(URL.createObjectURL(file));
         } else if (index !== null && field) {
-            // Update specializations
             const updatedSpecializations = [...formData.specializationList];
             updatedSpecializations[index].name[field] = value;
             setFormData((prev) => ({
@@ -115,36 +108,41 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
         }));
     };
 
-    const removeSpecialization = (index) => {
-        setFormData((prev) => ({
-            ...prev,
-            specializationList: prev.specializationList.filter((_, i) => i !== index),
-        }));
+    const removeSpecialization = async (index) => {
+        const specializationId = formData.specializationList[index].id;
+
+        if (specializationId) {
+            try {
+                await axios.delete(`https://pmc.result-me.uz/v1/doctor/specialization/delete/${specializationId}`);
+                setFormData((prev) => ({
+                    ...prev,
+                    specializationList: prev.specializationList.filter((_, i) => i !== index),
+                }));
+            } catch (error) {
+                console.error('Ошибка при удалении специализации:', error.response?.data || error.message);
+                setError('Ошибка при удалении специализации.');
+            }
+        } else {
+            setFormData((prev) => ({
+                ...prev,
+                specializationList: prev.specializationList.filter((_, i) => i !== index),
+            }));
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
-    
+
         try {
             const existingPhotoId = formData.photoId;
-    
-            // Handle photo update
+
             if (formData.photo instanceof File) {
                 if (existingPhotoId) {
-                    // Обновление существующего фото
                     const updatePhotoFormData = new FormData();
                     updatePhotoFormData.append('photo', formData.photo);
-                    // Если требуется отправить URL, добавьте его
-                    // updatePhotoFormData.append('url', newPhotoUrl);
-    
-                    // Логируем содержимое FormData
-                    // console.log(`Отправка обновления фото с ID ${existingPhotoId}:`);
-                    for (let [key, value] of updatePhotoFormData.entries()) {
-                        console.log(`${key}:`, value);
-                    }
-    
+
                     const photoResponse = await axios.put(
                         `https://pmc.result-me.uz/v1/photo/update/${existingPhotoId}`,
                         updatePhotoFormData,
@@ -154,20 +152,12 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
                             },
                         }
                     );
-    
-                    const updatedPhotoData = photoResponse.data.data; // Содержит URL и, возможно, ID
-                    // console.log('Обновлённые данные фото:', updatedPhotoData);
+
+                    const updatedPhotoData = photoResponse.data.data;
                 } else {
-                    // Загрузка нового фото
                     const photoFormData = new FormData();
                     photoFormData.append('photo', formData.photo);
-    
-                    // Логируем содержимое FormData
-                    // console.log('Отправка нового фото:');
-                    // for (let [key, value] of photoFormData.entries()) {
-                    //     console.log(`${key}:`, value);
-                    // }
-    
+
                     const photoResponse = await axios.post(
                         'https://pmc.result-me.uz/v1/photo/update',
                         photoFormData,
@@ -177,21 +167,16 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
                             },
                         }
                     );
-    
-                    const newPhotoData = photoResponse.data.data; // Содержит URL и, возможно, ID
-                    // console.log('Данные нового фото:', newPhotoData);
-    
-                    // Обновите formData с новым photoId, если это необходимо
+
+                    const newPhotoData = photoResponse.data.data;
                     setFormData((prev) => ({
                         ...prev,
                         photoId: newPhotoData.id,
                     }));
                 }
             } else if (formData.photo === null && existingPhotoId) {
-                // Удаление фото
                 const removePhotoData = { url: null };
-                // console.log(`Отправка удаления фото с ID ${existingPhotoId}:`, removePhotoData);
-    
+
                 await axios.put(
                     `https://pmc.result-me.uz/v1/photo/update/${existingPhotoId}`,
                     removePhotoData,
@@ -202,8 +187,7 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
                     }
                 );
             }
-    
-            // Подготовка данных врача без фото
+
             const jsonData = {
                 id: formData.id,
                 fullName: formData.fullName,
@@ -215,12 +199,8 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
                     id: spec.id || undefined,
                     name: spec.name,
                 })),
-                // Фото исключено, так как обрабатывается отдельно
             };
-    
-            // Логируем данные врача перед отправкой
-            // console.log('Отправка данных врача:', jsonData);
-    
+
             const response = await axios.put(
                 'https://pmc.result-me.uz/v1/doctor/update',
                 jsonData,
@@ -230,7 +210,7 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
                     },
                 }
             );
-    
+
             onSave(response.data.data);
             onClose();
         } catch (err) {
@@ -240,8 +220,6 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
             setLoading(false);
         }
     };
-    
-    
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -257,40 +235,39 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
                         <div className="flex flex-wrap gap-2 border rounded-lg p-4 text-green-700 text-base">
                             {formData.specializationList.map((specialization, index) => (
                                 <div key={index} className="flex items-center space-x-2">
-                                <div className="relative flex items-center bg-green-100 focus-within:border focus-within:border-green-700 p-2 rounded-md w-full">
-                                    <input
-                                        type="text"
-                                        placeholder="Специализация (RU)"
-                                        value={specialization.name.ru}
-                                        onChange={(e) => handleChange(e, index, 'ru')}
-                                        className="bg-transparent border-none outline-none w-full pr-8"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => removeSpecialization(index)}
-                                        className="absolute right-0 mr-2 text-green-700"
-                                    >
-                                        <Image src={close_green} width={20} height={20} alt="Удалить" />
-                                    </button>
+                                    <div className="relative flex items-center bg-green-100 focus-within:border focus-within:border-green-700 p-2 rounded-md w-full">
+                                        <input
+                                            type="text"
+                                            placeholder="Специализация (RU)"
+                                            value={specialization.name.ru}
+                                            onChange={(e) => handleChange(e, index, 'ru')}
+                                            className="bg-transparent border-none outline-none w-full pr-8"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeSpecialization(index)}
+                                            className="absolute right-0 mr-2 text-green-700"
+                                        >
+                                            <Image src={close_green} width={20} height={20} alt="Удалить" />
+                                        </button>
+                                    </div>
+                                    <div className="relative flex items-center bg-green-100 focus-within:border focus-within:border-green-700 p-2 rounded-md w-full">
+                                        <input
+                                            type="text"
+                                            placeholder="Специализация (UZ)"
+                                            value={specialization.name.uz}
+                                            onChange={(e) => handleChange(e, index, 'uz')}
+                                            className="bg-transparent border-none outline-none w-full pr-8"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeSpecialization(index)}
+                                            className="absolute right-0 mr-2 text-green-700"
+                                        >
+                                            <Image src={close_green} width={20} height={20} alt="Удалить" />
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="relative flex items-center bg-green-100 focus-within:border focus-within:border-green-700 p-2 rounded-md w-full">
-                                    <input
-                                        type="text"
-                                        placeholder="Специализация (UZ)"
-                                        value={specialization.name.uz}
-                                        onChange={(e) => handleChange(e, index, 'uz')}
-                                        className="bg-transparent border-none outline-none w-full pr-8"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => removeSpecialization(index)}
-                                        className="absolute right-0 mr-2 text-green-700"
-                                    >
-                                        <Image src={close_green} width={20} height={20} alt="Удалить" />
-                                    </button>
-                                </div>
-                            </div>
-                            
                             ))}
                             <button
                                 type="button"

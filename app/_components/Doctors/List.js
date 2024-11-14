@@ -96,6 +96,9 @@ export default function DoctorsComp() {
             localStorage.setItem('locale', newLocale.trim().toLowerCase()) // Удаление пробелов и приведение к нижнему регистру
         }
     }
+    useEffect(() => {
+        console.log('Doctors data:', doctors);
+    }, [doctors]);
 
     if (loading) return <div className='text-center'>{t.loading}</div>
     if (error) return <div className='text-center text-red-500'>{error}</div>
@@ -141,21 +144,23 @@ export default function DoctorsComp() {
                     <div key={doctor.id} className="relative">
                         <a href={`/doctors/${doctor.slug}`}>
                             <NewCardMain
-                                title={doctor.fullName || t.noName}
+                                title={
+                                    typeof doctor.fullName === 'object'
+                                        ? doctor.fullName[locale] || t.noName
+                                        : doctor.fullName || t.noName
+                                }
                                 imageSrc={doctor.photo?.url || '/images/default-image.png'}
                                 specializationList={
-                                    doctor.specializationList?.length > 0
-                                        ? doctor.specializationList.map(spec => {
-                                            if (typeof spec.name === 'object') {
-                                                // Если name - объект, выбираем значение по текущей локали
-                                                return spec.name[locale] || t.noSpecializations
-                                            }
-                                            // Если name - строка, используем её напрямую
-                                            return spec.name
-                                        })
+                                    Array.isArray(doctor.specializationList) && doctor.specializationList.length > 0
+                                        ? doctor.specializationList.map(spec =>
+                                            typeof spec.name === 'object'
+                                                ? spec.name[locale] || t.noSpecializations
+                                                : spec.name || t.noSpecializations
+                                        )
                                         : []
                                 }
                             />
+
                         </a>
                         <button
                             onClick={() => deleteDoctor(doctor.id)}

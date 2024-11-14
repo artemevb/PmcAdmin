@@ -23,7 +23,7 @@ const translations = {
         switchToUz: "O'zbek",
         loading: 'Загрузка...',
         error: 'Вернитесь в главное меню и снова перейдите на эту страницу',
-        doctorNotFound: 'Doktor topilmadi.',
+        doctorNotFound: 'Доктор не найден.',
     },
 };
 
@@ -113,13 +113,13 @@ export default function DoctorPage() {
             <div className="flex justify-end gap-2 mb-4 px-4">
                 <button
                     onClick={() => switchLocale('ru')}
-                    className={`px-4 py-2 rounded ${locale === 'ru' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
+                    className={`px-4 py-2 ${locale === 'ru' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
                 >
                     {t.switchToRu}
                 </button>
                 <button
                     onClick={() => switchLocale('uz')}
-                    className={`px-4 py-2 rounded ${locale === 'uz' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
+                    className={`px-4 py-2 ${locale === 'uz' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
                 >
                     {t.switchToUz}
                 </button>

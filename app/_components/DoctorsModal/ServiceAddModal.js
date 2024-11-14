@@ -67,7 +67,7 @@ export default function Modal({
                             className="mt-1 block w-full border border-gray-300 rounded-md p-3"
                         />
                     </div>
-                    {createError && <p className="text-red-500 text-sm">{createError}</p>}
+                    {/* {createError && <p className="text-red-500 text-sm">{createError}</p>} */}
                     {successMessage && <p className="text-green-500 text-sm">{successMessage}</p>}
                     <div className="flex justify-end space-x-2 pt-[50px]">
                         <button

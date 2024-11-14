@@ -15,7 +15,7 @@ const translations = {
         specializationNameRu: 'Название специализации (RU)',
         close: 'Закрыть',
     },
-    ru: {
+    uz: {
         addSpecialization: 'Добавить специализацию',
         save: 'Сохранить',
         cancel: 'Отмена',
@@ -24,6 +24,7 @@ const translations = {
         close: 'Закрыть',
     },
 };
+
 
 export default function ModalAddSpecialization({ isOpen, onClose, onSave, locale }) {
     const [specializationName, setSpecializationName] = useState({ uz: '', ru: '' });

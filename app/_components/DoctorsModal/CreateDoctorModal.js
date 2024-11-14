@@ -73,7 +73,7 @@ export default function CreateDoctorModal({ isOpen, onClose, onSave, locale }) {
         e.preventDefault()
         setLoading(true)
         setError(null)
-
+    
         try {
             const jsonData = {
                 fullName: {
@@ -94,24 +94,26 @@ export default function CreateDoctorModal({ isOpen, onClose, onSave, locale }) {
                 },
                 specializationList: formData.specializationList
             }
-
+    
             const data = new FormData()
             data.append('json', JSON.stringify(jsonData)) // Добавляем JSON как строку
             if (formData.photo) {
                 data.append('photo', formData.photo)
             }
-
+    
             // Логируем содержимое FormData
             for (const [key, value] of data.entries()) {
                 console.log(`${key}:`, value)
             }
-
+    
             const response = await axios.post('https://pmc.result-me.uz/v1/doctor/create', data, {
                 headers: {
                     'Accept-Language': locale,
                     'Content-Type': 'multipart/form-data'
                 }
             })
+    
+            console.log('Созданный врач:', response.data.data) // Добавьте это для проверки
             onSave(response.data.data)
         } catch (err) {
             setError('Ошибка при создании врача.')
@@ -120,6 +122,7 @@ export default function CreateDoctorModal({ isOpen, onClose, onSave, locale }) {
             setLoading(false)
         }
     }
+    
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

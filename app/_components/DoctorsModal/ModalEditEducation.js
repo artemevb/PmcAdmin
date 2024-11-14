@@ -10,19 +10,19 @@ const ModalEditEducation = ({ isOpen, onClose, onSave, education, locale }) => {
             title: 'Редактировать образование',
             startYear: 'Год начала',
             finishYear: 'Год окончания',
-            institution: 'Учебное заведение',
-            qualification: 'Квалификация',
+            institution: 'Наименование образовательного учреждения',
+            qualification: 'Направление',
             save: 'Сохранить',
             cancel: 'Отмена',
         },
         uz: {
-            title: 'Ta\'limni tahrirlash',
-            startYear: 'Boshlanish yili',
-            finishYear: 'Tugash yili',
-            institution: 'Ta\'lim muassasasi',
-            qualification: 'Malaka',
-            save: 'Saqlash',
-            cancel: 'Bekor qilish',
+            title: 'Редактировать образование',
+            startYear: 'Год начала',
+            finishYear: 'Год окончания',
+            institution: 'Наименование образовательного учреждения',
+            qualification: 'Направление',
+            save: 'Сохранить',
+            cancel: 'Отмена',
         },
     };
 
@@ -105,89 +105,91 @@ const ModalEditEducation = ({ isOpen, onClose, onSave, education, locale }) => {
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg w-full max-w-[1235px] p-6 relative">
+            <div className="bg-white w-full max-w-[1235px] p-6 relative">
                 <button onClick={onClose} className="absolute top-4 right-4">
                     <Image src={closeIcon} alt="Закрыть" width={24} height={24} />
                 </button>
-                <h2 className="text-2xl font-semibold mb-4">{t.title}</h2>
+                <h2 className="text-[30px] font-bold mb-[40px] border-b pb-[32px]">{t.title}</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="flex flex-col">
-                        <label>{t.startYear}</label>
-                        <input
-                            type="text"
-                            name="startYear"
-                            value={formData.startYear}
-                            onChange={handleChange}
-                            required
-                            className="border p-2 rounded"
-                        />
+                    <div className='flex gap-[12px] w-full'>
+                        <div className="flex flex-col w-full">
+                            <label className='text-[#A6A6A6]'>{t.startYear}</label>
+                            <input
+                                type="text"
+                                name="startYear"
+                                value={formData.startYear}
+                                onChange={handleChange}
+                                required
+                                className="border p-4 rounded-[10px] text-[#010101]"
+                            />
+                        </div>
+                        <div className="flex flex-col w-full">
+                            <label className='text-[#A6A6A6]'>{t.finishYear}</label>
+                            <input
+                                type="text"
+                                name="finishYear"
+                                value={formData.finishYear}
+                                onChange={handleChange}
+                                required
+                                className="border p-4 rounded-[10px] text-[#010101]"
+                            />
+                        </div>
                     </div>
                     <div className="flex flex-col">
-                        <label>{t.finishYear}</label>
-                        <input
-                            type="text"
-                            name="finishYear"
-                            value={formData.finishYear}
-                            onChange={handleChange}
-                            required
-                            className="border p-2 rounded"
-                        />
-                    </div>
-                    <div className="flex flex-col">
-                        <label>{t.institution} (UZ)</label>
+                        <label className='text-[#A6A6A6]'>{t.institution} (UZ)</label>
                         <input
                             type="text"
                             name="institution.uz"
                             value={formData.institution.uz}
                             onChange={handleChange}
                             required
-                            className="border p-2 rounded"
+                            className="border p-4 rounded-[10px] text-[#010101]"
                         />
                     </div>
                     <div className="flex flex-col">
-                        <label>{t.institution} (RU)</label>
+                        <label className='text-[#A6A6A6]'>{t.institution} (RU)</label>
                         <input
                             type="text"
                             name="institution.ru"
                             value={formData.institution.ru}
                             onChange={handleChange}
                             required
-                            className="border p-2 rounded"
+                            className="border p-4 rounded-[10px] text-[#010101]"
                         />
                     </div>
                     <div className="flex flex-col">
-                        <label>{t.qualification} (UZ)</label>
+                        <label className='text-[#A6A6A6]'>{t.qualification} (UZ)</label>
                         <input
                             type="text"
                             name="qualification.uz"
                             value={formData.qualification.uz}
                             onChange={handleChange}
                             required
-                            className="border p-2 rounded"
+                            className="border p-4 rounded-[10px] text-[#010101]"
                         />
                     </div>
                     <div className="flex flex-col">
-                        <label>{t.qualification} (RU)</label>
+                        <label className='text-[#A6A6A6]'>{t.qualification} (RU)</label>
                         <input
                             type="text"
                             name="qualification.ru"
                             value={formData.qualification.ru}
                             onChange={handleChange}
                             required
-                            className="border p-2 rounded"
+                            className="border p-4 rounded-[10px] text-[#010101]"
                         />
                     </div>
                     <div className="flex justify-end gap-4">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                            className="px-[65px] py-3 bg-gray-300 hover:bg-gray-400"
                         >
                             {t.cancel}
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                            className="px-[65px] py-3 bg-[#00863E] text-white hover:bg-green-700"
                         >
                             {t.save}
                         </button>

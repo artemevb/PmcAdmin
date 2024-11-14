@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Image from "next/image";
-import Modal from '../DoctorsModal/ServiceAddModal';
+import ServiceAddModal from '../DoctorsModal/ServiceAddModal';
 import UpdateModal from '../DoctorsModal/UpdateServiceModal';
 import plus_green from "@/public/svg/plus-green.svg";
 import pen from "@/public/svg/pen.svg";
@@ -24,8 +24,8 @@ const translations = {
         deleteAlt: 'Удалить',
         nameRu: 'Название услуги (RU)',
         nameUz: 'Название услуги (UZ)',
-        priceRu: 'Цена (RU)',
-        priceUz: 'Цена (UZ)',
+        priceRu: 'Стоимость услуги (RU)',
+        priceUz: 'Стоимость услуги (UZ)',
         submit: 'Отправить',
         cancel: 'Отмена',
         loading: 'Загрузка...',
@@ -34,42 +34,42 @@ const translations = {
         errorDelete: 'Ошибка при удалении услуги.',
         successDelete: 'Услуга успешно удалена.',
         specificError: 'Ошибка: ',
-        updateService: 'Обновить услугу',
+        updateService: 'Редактировать Услуги',
         successUpdate: 'Услуга успешно обновлена.',
         errorUpdate: 'Ошибка при обновлении услуги.',
         updating: 'Обновление...',
-        update: 'Обновить',
+        update: 'Сохранить',
         close: 'Закрыть',
     },
     uz: {
-        addService: 'Xizmat qo\'shish',
-        edit: 'Tahrirlash',
-        delete: 'O\'chirish',
-        noServices: 'Hech qanday xizmat mavjud emas',
-        active: 'Faol',
-        inactive: 'Faol emas',
-        servicesTitle: 'Doktor xizmatlari',
-        addServiceAlt: 'Xizmat qo\'shish',
-        editAlt: 'Tahrirlash',
-        deleteAlt: 'O\'chirish',
-        nameRu: 'Xizmat nomi (RU)',
-        nameUz: 'Xizmat nomi (UZ)',
-        priceRu: 'Narxi (RU)',
-        priceUz: 'Narxi (UZ)',
-        submit: 'Jo\'natish',
-        cancel: 'Bekor qilish',
-        loading: 'Yuklanmoqda...',
-        errorCreate: 'Xizmatni yaratishda xato yuz berdi.',
-        successCreate: 'Xizmat muvaffaqiyatli yaratildi.',
-        errorDelete: 'Xizmatni o\'chirishda xato yuz berdi.',
-        successDelete: 'Xizmat muvaffaqiyatli o\'chirildi.',
-        specificError: 'Xato: ',
-        updateService: 'Xizmatni yangilash',
-        successUpdate: 'Xizmat muvaffaqiyatli yangilandi.',
-        errorUpdate: 'Xizmatni yangilashda xato yuz berdi.',
-        updating: 'Yangilanmoqda...',
-        update: 'Yangilash',
-        close: 'Yopish',
+        addService: 'Добавить услугу',
+        edit: 'Редактировать',
+        delete: 'Удалить',
+        noServices: 'Нет услуг',
+        active: 'Активна',
+        inactive: 'Неактивна',
+        servicesTitle: 'Услуги доктора',
+        addServiceAlt: 'Добавить услугу',
+        editAlt: 'Редактировать',
+        deleteAlt: 'Удалить',
+        nameRu: 'Название услуги (RU)',
+        nameUz: 'Название услуги (UZ)',
+        priceRu: 'Стоимость услуги (RU)',
+        priceUz: 'Стоимость услуги (UZ)',
+        submit: 'Отправить',
+        cancel: 'Отмена',
+        loading: 'Загрузка...',
+        errorCreate: 'Ошибка при создании услуги.',
+        successCreate: 'Услуга успешно создана.',
+        errorDelete: 'Ошибка при удалении услуги.',
+        successDelete: 'Услуга успешно удалена.',
+        specificError: 'Ошибка: ',
+        updateService: 'Редактировать Услуги',
+        successUpdate: 'Услуга успешно обновлена.',
+        errorUpdate: 'Ошибка при обновлении услуги.',
+        updating: 'Обновление...',
+        update: 'Сохранить',
+        close: 'Закрыть',
     },
 };
 
@@ -130,16 +130,7 @@ export default function ServiceMain({ locale, doctorId, refreshDoctor }) {
     }, [servicesData]);
 
     // Adjust itemsLimit based on window size
-    useEffect(() => {
-        const handleResize = () => {
-            const newLimit = window.innerWidth >= 460 ? 12 : 4;
-            setItemsLimit(newLimit);
-            console.log('Items limit set to:', newLimit);
-        };
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+
 
     // Handle form input changes for adding services
     const handleChange = (e, field, lang) => {
@@ -151,8 +142,8 @@ export default function ServiceMain({ locale, doctorId, refreshDoctor }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setCreateError('');
-        setSuccessMessage('');
+        setCreateError('Перезагрузите страницу, чтобы увидеть изменения');
+        setSuccessMessage('Перезагрузите страницу, чтобы увидеть изменения');
 
         console.log('Submitting new service with formData:', formData);
 
@@ -171,7 +162,7 @@ export default function ServiceMain({ locale, doctorId, refreshDoctor }) {
             console.log('Add service response:', response.data);
 
             if (response.data && response.data.success) {
-                setSuccessMessage(t.successCreate);
+                setSuccessMessage("Перезагрузите страницу, чтобы увидеть изменения");
                 setFormData({ name: { ru: '', uz: '' }, price: { ru: '', uz: '' } });
                 // Fetch services data again
                 const updatedServices = await axios.get(`https://pmc.result-me.uz/v1/doctor/service/get-all/${doctorId}`, {
@@ -184,7 +175,7 @@ export default function ServiceMain({ locale, doctorId, refreshDoctor }) {
 
                 setTimeout(() => {
                     setIsModalOpen(false);
-                    setSuccessMessage('');
+                    setSuccessMessage('Перезагрузите страницу, чтобы увидеть изменения');
                 }, 2000);
             } else {
                 setCreateError(response.data.message || t.errorCreate);
@@ -269,7 +260,8 @@ export default function ServiceMain({ locale, doctorId, refreshDoctor }) {
             </h2>
             <div className="grid mdx:gap-x-[16px] gap-y-[12px] mdx:gap-y-[20px] mdx:grid-cols-2 mt-[25px] mdx:mt-[30px] 2xl:grid-cols-4">
                 {servicesData && servicesData.length > 0 ? (
-                    servicesData.slice(0, itemsLimit).map((service) => (
+                    servicesData.map((service) => (
+
                         <div key={service.id} className="relative border border-[#EEE] p-[20px] flex flex-col justify-between min-h-[150px] mdx:min-h-[180px] 2xl:min-h-[200px]">
                             <button
                                 className="absolute top-[10px] right-[10px]"
@@ -335,7 +327,7 @@ export default function ServiceMain({ locale, doctorId, refreshDoctor }) {
             {deleteError && <p className="text-red-500 text-sm mt-4">{deleteError}</p>}
 
             {/* Add Service Modal */}
-            <Modal
+            <ServiceAddModal
                 isOpen={isModalOpen}
                 onClose={() => {
                     console.log('Closing Add Service Modal');
