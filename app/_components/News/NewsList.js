@@ -86,7 +86,7 @@ export default function NewsComp() {
                         onClick={() => switchLocale('uz')}
                         className={`px-4 py-2 ${locale === 'uz' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
                     >
-                        O'zbek
+                        Ozbek
                     </button>
                 </div>
                 <button
