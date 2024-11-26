@@ -9,7 +9,8 @@ import axios from 'axios';
 import { useParams } from 'next/navigation';
 import EditBlockModal from './EditBlockModal';
 import AddBlockModal from './AddBlockModal';
-import translations from './translations'; // Импортируем объект переводов
+import translations from './translations';
+import { useRouter } from 'next/navigation';
 
 const formatTextWithNewlines = (text) => {
     if (text && typeof text === 'object') {
@@ -27,7 +28,7 @@ const formatTextWithNewlines = (text) => {
             </span>
         ));
     }
-    return null; // Возвращаем null, если text не объект и не строка
+    return null; 
 };
 
 export default function MainPages() {
@@ -40,6 +41,7 @@ export default function MainPages() {
     });
     const [news, setNews] = useState(null);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
     const [error, setError] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -54,7 +56,6 @@ export default function MainPages() {
         }
     };
 
-    // Шаг 1: Определение fetchNews с использованием useCallback
     const fetchNews = useCallback(async () => {
         if (!slug) return;
 
@@ -75,7 +76,7 @@ export default function MainPages() {
         }
     }, [slug, locale]);
 
-    // Шаг 1: Вызов fetchNews при изменении зависимости
+
     useEffect(() => {
         fetchNews();
     }, [fetchNews]);
@@ -169,6 +170,12 @@ export default function MainPages() {
 
     return (
         <>
+            <button
+                onClick={() => router.back()}
+                className='text-[20px] text-[#00863E] font-bold hover:text-[#2c8d59] ml-[200px] w-[40px]'
+            >
+                Назад
+            </button>
             <div className="w-full max-w-[1440px] mx-auto px-4 py-8">
                 {updateStatus.message && (
                     <div className={`mb-4 p-4 text-center rounded ${updateStatus.success ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>

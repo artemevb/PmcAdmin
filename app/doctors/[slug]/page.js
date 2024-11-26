@@ -1,15 +1,12 @@
-// app/doctors/[slug]/page.jsx
-
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation'; 
 import axios from 'axios';
 import Main_info from "../../_components/Doctors/Main";
 import SkillsMain from "../../_components/Doctors/SkillsMain";
 import ServiceMain from "../../_components/Doctors/ServiceMain";
 
-// Translations for static texts
 const translations = {
     ru: {
         switchToRu: 'Русский',
@@ -28,32 +25,32 @@ const translations = {
 };
 
 export default function DoctorPage() {
-    const { slug } = useParams(); // Get slug from URL
+    const { slug } = useParams();
+    const router = useRouter();
     const [locale, setLocale] = useState('ru');
     const [doctor, setDoctor] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const t = translations[locale];
 
-    // Function to fetch doctor data
     const fetchDoctor = async () => {
         setLoading(true);
         setError(null);
         try {
             const response = await axios.get(`https://pmc.result-me.uz/v1/doctor/get/${slug}`, {
                 headers: {
-                    'Accept-Language': locale, // Set locale
+                    'Accept-Language': locale,
                 },
             });
 
-            console.log('Fetched doctor data:', response.data); // Log the entire response
+            console.log('Fetched doctor data:', response.data);
 
             if (response.data && response.data.data) {
                 setDoctor(response.data.data);
-                console.log('Doctor data set:', response.data.data); // Log the doctor data being set
+                console.log('Doctor data set:', response.data.data);
             } else {
                 setError(t.error);
-                console.log('Error: ', t.error); // Log the error message
+                console.log('Error: ', t.error);
             }
         } catch (err) {
             console.error('Error fetching doctor data:', err);
@@ -63,73 +60,75 @@ export default function DoctorPage() {
         }
     };
 
-    // Initialize locale from localStorage on mount
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const storedLocale = localStorage.getItem('locale');
             if (storedLocale && (storedLocale === 'ru' || storedLocale === 'uz')) {
                 setLocale(storedLocale);
-                console.log('Locale set from localStorage:', storedLocale); // Log the locale set
+                console.log('Locale set from localStorage:', storedLocale); 
             }
         }
     }, []);
 
-    // Fetch doctor data when slug or locale changes
     useEffect(() => {
         if (slug) {
             fetchDoctor();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [slug, locale]);
 
-    // Function to switch locale
     const switchLocale = (newLocale) => {
         if (newLocale === locale) return;
         setLocale(newLocale);
         if (typeof window !== 'undefined') {
             localStorage.setItem('locale', newLocale);
-            console.log('Locale switched to:', newLocale); // Log locale switch
+            console.log('Locale switched to:', newLocale);
         }
     };
 
-    // Functions for editing and deleting entries
     const handleEdit = (type, id) => {
-        // Implemented in ServiceMain
+
     };
 
     const handleDelete = (type, id) => {
-        // Implemented in ServiceMain
+
     };
 
     if (loading) return <div className='text-center'>{t.loading}</div>;
     if (error) return <div className='text-center text-red-500'>{t.error}</div>;
     if (!doctor) return <div className='text-center'>{t.doctorNotFound}</div>;
 
-    console.log('Rendering DoctorPage with doctor data:', doctor); // Log before rendering
+    console.log('Rendering DoctorPage with doctor data:', doctor);
 
     return (
         <div className="w-full bg-white flex flex-col mt-[30px]">
-            {/* Language Switch Buttons */}
-            <div className="flex justify-end gap-2 mb-4 px-4">
-                <button
-                    onClick={() => switchLocale('ru')}
-                    className={`px-4 py-2 ${locale === 'ru' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
-                >
-                    {t.switchToRu}
-                </button>
-                <button
-                    onClick={() => switchLocale('uz')}
-                    className={`px-4 py-2 ${locale === 'uz' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
-                >
-                    {t.switchToUz}
-                </button>
+            <div className="flex justify-between gap-2 mb-4 px-4">
+                <div>
+                    <button
+                        onClick={() => router.back()}
+                        className='text-[20px] text-[#00863E] font-bold hover:text-[#2c8d59]'
+                    >
+                        Назад
+                    </button>
+                </div>
+                <div>
+                    <button
+                        onClick={() => switchLocale('ru')}
+                        className={`px-4 py-2 ${locale === 'ru' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
+                    >
+                        {t.switchToRu}
+                    </button>
+                    <button
+                        onClick={() => switchLocale('uz')}
+                        className={`px-4 py-2 ${locale === 'uz' ? 'bg-[#00863E] text-white' : 'bg-gray-200 text-gray-700'}`}
+                    >
+                        {t.switchToUz}
+                    </button>
+                </div>
             </div>
-
-            {/* Pass data to child components */}
             <Main_info
                 doctor={doctor}
                 locale={locale}
-                fetchDoctor={fetchDoctor} // To refresh data after update
+                fetchDoctor={fetchDoctor} 
             />
 
             <SkillsMain
@@ -139,17 +138,18 @@ export default function DoctorPage() {
                 locale={locale}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
-                refreshDoctor={fetchDoctor} // Function to refresh data
+                refreshDoctor={fetchDoctor}
             />
 
             <ServiceMain
-                services={doctor.serviceOfDoctorList || []} // Ensure it's an array
+                services={doctor.serviceOfDoctorList || []}
                 locale={locale}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
                 doctorId={doctor.id}
-                refreshDoctor={fetchDoctor} // Function to refresh data
+                refreshDoctor={fetchDoctor} 
             />
         </div>
     );
 }
+
