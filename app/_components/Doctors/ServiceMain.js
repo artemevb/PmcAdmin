@@ -103,7 +103,7 @@ export default function ServiceMain({ locale, doctorId, refreshDoctor }) {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const response = await axios.get(`https://pmc.result-me.uz/v1/doctor/service/get-all/${doctorId}`, {
+                const response = await axios.get(`https://api.pmc.dr-psixoterapevt.uz/v1/doctor/service/get-all/${doctorId}`, {
                     headers: {
                         'Authorization': token ? `Bearer ${token}` : '',
                         'Accept-Language': locale,
@@ -148,7 +148,7 @@ export default function ServiceMain({ locale, doctorId, refreshDoctor }) {
         console.log('Submitting new service with formData:', formData);
 
         try {
-            const response = await axios.post(`https://pmc.result-me.uz/v1/doctor/service/create/${doctorId}`, {
+            const response = await axios.post(`https://api.pmc.dr-psixoterapevt.uz/v1/doctor/service/create/${doctorId}`, {
                 name: formData.name,
                 price: formData.price,
             }, {
@@ -165,7 +165,7 @@ export default function ServiceMain({ locale, doctorId, refreshDoctor }) {
                 setSuccessMessage("Перезагрузите страницу, чтобы увидеть изменения");
                 setFormData({ name: { ru: '', uz: '' }, price: { ru: '', uz: '' } });
                 // Fetch services data again
-                const updatedServices = await axios.get(`https://pmc.result-me.uz/v1/doctor/service/get-all/${doctorId}`, {
+                const updatedServices = await axios.get(`https://api.pmc.dr-psixoterapevt.uz/v1/doctor/service/get-all/${doctorId}`, {
                     headers: {
                         'Authorization': token ? `Bearer ${token}` : '',
                         'Accept-Language': locale,
@@ -194,7 +194,7 @@ export default function ServiceMain({ locale, doctorId, refreshDoctor }) {
         setDeleteError('');
         console.log('Attempting to delete service with ID:', serviceId);
         try {
-            const response = await axios.delete(`https://pmc.result-me.uz/v1/doctor/service/delete/${serviceId}`, {
+            const response = await axios.delete(`https://api.pmc.dr-psixoterapevt.uz/v1/doctor/service/delete/${serviceId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -205,7 +205,7 @@ export default function ServiceMain({ locale, doctorId, refreshDoctor }) {
             if (response.status === 200) {
                 alert(t.successDelete);
                 // Fetch services data again
-                const updatedServices = await axios.get(`https://pmc.result-me.uz/v1/doctor/service/get-all/${doctorId}`, {
+                const updatedServices = await axios.get(`https://api.pmc.dr-psixoterapevt.uz/v1/doctor/service/get-all/${doctorId}`, {
                     headers: {
                         'Authorization': token ? `Bearer ${token}` : '',
                         'Accept-Language': locale,
@@ -241,7 +241,7 @@ export default function ServiceMain({ locale, doctorId, refreshDoctor }) {
     // Function to refresh services data after update
     const refreshServicesData = async () => {
         try {
-            const updatedServices = await axios.get(`https://pmc.result-me.uz/v1/doctor/service/get-all/${doctorId}`, {
+            const updatedServices = await axios.get(`https://api.pmc.dr-psixoterapevt.uz/v1/doctor/service/get-all/${doctorId}`, {
                 headers: {
                     'Authorization': token ? `Bearer ${token}` : '',
                     'Accept-Language': locale,

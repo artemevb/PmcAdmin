@@ -106,7 +106,7 @@ export default function CreateDoctorModal({ isOpen, onClose, onSave, locale }) {
                 console.log(`${key}:`, value)
             }
     
-            const response = await axios.post('https://pmc.result-me.uz/v1/doctor/create', data, {
+            const response = await axios.post('https://api.pmc.dr-psixoterapevt.uz/v1/doctor/create', data, {
                 headers: {
                     'Accept-Language': locale,
                     'Content-Type': 'multipart/form-data'

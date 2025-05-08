@@ -46,7 +46,7 @@ export default function DoctorsComp() {
     // Функция для получения врачей на основе локали
     const fetchDoctors = async (currentLocale) => {
         try {
-            const response = await axios.get('https://pmc.result-me.uz/v1/doctor/get-all', {
+            const response = await axios.get('https://api.pmc.dr-psixoterapevt.uz/v1/doctor/get-all', {
                 headers: {
                     'Accept-Language': currentLocale // Установка языка запроса
                 }
@@ -67,7 +67,7 @@ export default function DoctorsComp() {
     // Функция для удаления врача
     const deleteDoctor = async (id) => {
         try {
-            await axios.delete(`https://pmc.result-me.uz/v1/doctor/delete/${id}`)
+            await axios.delete(`https://api.pmc.dr-psixoterapevt.uz/v1/doctor/delete/${id}`)
             setDoctors(doctors.filter(item => item.id !== id)) // Удаление удаленного врача из состояния
             alert('Врач успешно удален')
         } catch (err) {

@@ -83,7 +83,7 @@ const EditBlockModal = ({ isOpen, onClose, blockData, onSave, locale, newsId, ne
         setIsDeleting(true);
         setError(null);
         try {
-            const deleteResponse = await axios.delete(`https://pmc.result-me.uz/v1/photo/delete/${formData.photoId}`);
+            const deleteResponse = await axios.delete(`https://api.pmc.dr-psixoterapevt.uz/v1/photo/delete/${formData.photoId}`);
 
             if (deleteResponse.status === 200) {
                 setFormData((prev) => ({
@@ -117,7 +117,7 @@ const EditBlockModal = ({ isOpen, onClose, blockData, onSave, locale, newsId, ne
                 uploadData.append('photo', formData.photo);
 
                 const uploadResponse = await axios.put(
-                    `https://pmc.result-me.uz/v1/newness/block/update/photo/${blockId}`,
+                    `https://api.pmc.dr-psixoterapevt.uz/v1/newness/block/update/photo/${blockId}`,
                     uploadData,
                     {
                         headers: {
@@ -155,7 +155,7 @@ const EditBlockModal = ({ isOpen, onClose, blockData, onSave, locale, newsId, ne
 
             console.log("Payload for Update:", JSON.stringify(payload, null, 2)); // Добавлено логирование
 
-            const response = await axios.put('https://pmc.result-me.uz/v1/newness/update', payload, {
+            const response = await axios.put('https://api.pmc.dr-psixoterapevt.uz/v1/newness/update', payload, {
                 headers: { 'Content-Type': 'application/json' },
             });
 

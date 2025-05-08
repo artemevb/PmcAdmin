@@ -128,7 +128,7 @@ const CreateNewsModal = ({ isOpen, onClose, onSave, locale }) => {
             });
 
             // Отправка POST-запроса для создания новости
-            const response = await axios.post('https://pmc.result-me.uz/v1/newness/create', formData, {
+            const response = await axios.post('https://api.pmc.dr-psixoterapevt.uz/v1/newness/create', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

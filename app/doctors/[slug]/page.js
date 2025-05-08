@@ -37,7 +37,7 @@ export default function DoctorPage() {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.get(`https://pmc.result-me.uz/v1/doctor/get/${slug}`, {
+            const response = await axios.get(`https://api.pmc.dr-psixoterapevt.uz/v1/doctor/get/${slug}`, {
                 headers: {
                     'Accept-Language': locale,
                 },

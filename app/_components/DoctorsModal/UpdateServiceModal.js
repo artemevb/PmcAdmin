@@ -50,7 +50,7 @@ export default function UpdateServiceModal({ isOpen, onClose, service, onUpdate,
         console.log('Submitting updated service with formData:', formData);
 
         try {
-            const response = await axios.put('https://pmc.result-me.uz/v1/doctor/service/update', {
+            const response = await axios.put('https://api.pmc.dr-psixoterapevt.uz/v1/doctor/service/update', {
                 id: service.id,
                 name: formData.name,
                 price: formData.price,

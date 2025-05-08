@@ -128,7 +128,7 @@ const AddBlockModal = ({ isOpen, onClose, onSave, locale, newsId, existingBlocks
             }
 
             // Отправка POST-запроса
-            const response = await axios.post(`https://pmc.result-me.uz/v1/newness/block/add/${newsId}`, formDataToSend, {
+            const response = await axios.post(`https://api.pmc.dr-psixoterapevt.uz/v1/newness/block/add/${newsId}`, formDataToSend, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Accept-Language': locale,

@@ -26,7 +26,7 @@ export default function NewsComp() {
     // Функция для получения новостей на основе локали
     const fetchNews = async (currentLocale) => {
         try {
-            const response = await axios.get('https://pmc.result-me.uz/v1/newness/get-all', {
+            const response = await axios.get('https://api.pmc.dr-psixoterapevt.uz/v1/newness/get-all', {
                 headers: {
                     'Accept-Language': currentLocale // Установка языка запроса
                 }
@@ -42,7 +42,7 @@ export default function NewsComp() {
     // Функция для удаления новости
     const deleteNews = async (id) => {
         try {
-            await axios.delete(`https://pmc.result-me.uz/v1/newness/delete/${id}`)
+            await axios.delete(`https://api.pmc.dr-psixoterapevt.uz/v1/newness/delete/${id}`)
             setNews(news.filter(item => item.id !== id)) // Удаление удаленной новости из состояния
             alert('Новость удалена успешно')
         } catch (err) {

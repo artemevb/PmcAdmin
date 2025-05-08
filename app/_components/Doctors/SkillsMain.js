@@ -79,7 +79,7 @@ export default function SkillsMain({ doctorId, locale }) {
 
     const fetchDoctorData = async () => {
         try {
-            const response = await fetch(`https://pmc.result-me.uz/v1/doctor/get-by-id/${doctorId}`, {
+            const response = await fetch(`https://api.pmc.dr-psixoterapevt.uz/v1/doctor/get-by-id/${doctorId}`, {
                 headers: {
                     'Accept-Language': '-', // Устанавливаем Accept-Language в '-'
                 },
@@ -106,7 +106,7 @@ export default function SkillsMain({ doctorId, locale }) {
     // Функция для добавления специализации
     const handleSaveSpecialization = async (specializationData) => {
         try {
-            const response = await fetch(`https://pmc.result-me.uz/v1/doctor/specialization/create/${doctorId}`, {
+            const response = await fetch(`https://api.pmc.dr-psixoterapevt.uz/v1/doctor/specialization/create/${doctorId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -139,7 +139,7 @@ export default function SkillsMain({ doctorId, locale }) {
     // Функция для обновления специализации
     const handleUpdateSpecialization = async (updatedSpec) => {
         try {
-            const response = await fetch(`https://pmc.result-me.uz/v1/doctor/specialization/update`, {
+            const response = await fetch(`https://api.pmc.dr-psixoterapevt.uz/v1/doctor/specialization/update`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -165,7 +165,7 @@ export default function SkillsMain({ doctorId, locale }) {
     // Функция для добавления образования
     const handleSaveEducation = async (educationData) => {
         try {
-            const response = await fetch(`https://pmc.result-me.uz/v1/doctor/education/create/${doctorId}`, {
+            const response = await fetch(`https://api.pmc.dr-psixoterapevt.uz/v1/doctor/education/create/${doctorId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -192,7 +192,7 @@ export default function SkillsMain({ doctorId, locale }) {
     // Функция для обновления образования
     const handleUpdateEducation = async (updatedEducation) => {
         try {
-            const response = await fetch(`https://pmc.result-me.uz/v1/doctor/education/update`, {
+            const response = await fetch(`https://api.pmc.dr-psixoterapevt.uz/v1/doctor/education/update`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -243,9 +243,9 @@ export default function SkillsMain({ doctorId, locale }) {
         try {
             let url = '';
             if (deleteType === 'education') {
-                url = `https://pmc.result-me.uz/v1/doctor/education/delete/${deleteId}`;
+                url = `https://api.pmc.dr-psixoterapevt.uz/v1/doctor/education/delete/${deleteId}`;
             } else if (deleteType === 'specialization') {
-                url = `https://pmc.result-me.uz/v1/doctor/specialization/delete/${deleteId}`;
+                url = `https://api.pmc.dr-psixoterapevt.uz/v1/doctor/specialization/delete/${deleteId}`;
             } else {
                 return;
             }

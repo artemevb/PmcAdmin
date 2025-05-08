@@ -33,7 +33,7 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
     const fetchDoctorData = async () => {
         try {
             const response = await axios.get(
-                `https://pmc.result-me.uz/v1/doctor/get-by-id/${doctorId}`,
+                `https://api.pmc.dr-psixoterapevt.uz/v1/doctor/get-by-id/${doctorId}`,
                 {
                     headers: {
                         'Accept-Language': '-',
@@ -113,7 +113,7 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
 
         if (specializationId) {
             try {
-                await axios.delete(`https://pmc.result-me.uz/v1/doctor/specialization/delete/${specializationId}`);
+                await axios.delete(`https://api.pmc.dr-psixoterapevt.uz/v1/doctor/specialization/delete/${specializationId}`);
                 setFormData((prev) => ({
                     ...prev,
                     specializationList: prev.specializationList.filter((_, i) => i !== index),
@@ -144,7 +144,7 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
                     updatePhotoFormData.append('photo', formData.photo);
 
                     const photoResponse = await axios.put(
-                        `https://pmc.result-me.uz/v1/photo/update/${existingPhotoId}`,
+                        `https://api.pmc.dr-psixoterapevt.uz/v1/photo/update/${existingPhotoId}`,
                         updatePhotoFormData,
                         {
                             headers: {
@@ -159,7 +159,7 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
                     photoFormData.append('photo', formData.photo);
 
                     const photoResponse = await axios.post(
-                        'https://pmc.result-me.uz/v1/photo/update',
+                        'https://api.pmc.dr-psixoterapevt.uz/v1/photo/update',
                         photoFormData,
                         {
                             headers: {
@@ -178,7 +178,7 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
                 const removePhotoData = { url: null };
 
                 await axios.put(
-                    `https://pmc.result-me.uz/v1/photo/update/${existingPhotoId}`,
+                    `https://api.pmc.dr-psixoterapevt.uz/v1/photo/update/${existingPhotoId}`,
                     removePhotoData,
                     {
                         headers: {
@@ -202,7 +202,7 @@ export default function EditDoctorModal({ isOpen, onClose, onSave, locale, docto
             };
 
             const response = await axios.put(
-                'https://pmc.result-me.uz/v1/doctor/update',
+                'https://api.pmc.dr-psixoterapevt.uz/v1/doctor/update',
                 jsonData,
                 {
                     headers: {

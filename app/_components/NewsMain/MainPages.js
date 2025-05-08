@@ -62,7 +62,7 @@ export default function MainPages() {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.get(`https://pmc.result-me.uz/v1/newness/get/${slug}`, {
+            const response = await axios.get(`https://api.pmc.dr-psixoterapevt.uz/v1/newness/get/${slug}`, {
                 headers: { 'Accept-Language': locale },
             });
             const data = response.data.data;
@@ -109,7 +109,7 @@ export default function MainPages() {
         if (!confirmDelete) return;
 
         try {
-            await axios.delete(`https://pmc.result-me.uz/v1/newness/block/delete/${blockId}`, {
+            await axios.delete(`https://api.pmc.dr-psixoterapevt.uz/v1/newness/block/delete/${blockId}`, {
                 headers: { 'Accept-Language': locale },
             });
 
